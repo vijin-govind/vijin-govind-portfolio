@@ -35,7 +35,12 @@ export function Hero() {
           animate="show"
           custom={0}
           variants={rise}
-          className="tracking-hero text-hero font-bold leading-[0.95] text-ink"
+          // One line, always. The name is a fixed string 9.65× the font size
+          // wide, and the hero sits in a full-width column on mobile but only a
+          // ~6-of-12 column on desktop — so the two need different sizes, each
+          // capped to fit its container. nowrap is the guarantee; the clamps
+          // keep it from overflowing that guarantee.
+          className="tracking-hero whitespace-nowrap text-[clamp(1.25rem,7vw,1.85rem)] font-bold leading-[1.02] text-ink md:text-[clamp(1.75rem,3.7vw,4.5rem)]"
         >
           {profile.greeting}
         </motion.h1>
