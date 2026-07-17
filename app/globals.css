@@ -1,0 +1,86 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   Design tokens. Monochrome by intent: the only colour in the system is the
+   camera feed and the visitor's own room.
+--------------------------------------------------------------------------- */
+@theme {
+  --color-ink: #0a0a0a;
+  --color-ink-soft: #6b6b6b;
+  --color-ink-faint: #a3a3a3;
+  --color-hairline: #e5e5e5;
+  --color-paper: #ffffff;
+  --color-scrim: #d4d4d4;
+
+  --font-sans: var(--font-inter), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+  /* Editorial type scale. Hero is fluid across the full viewport range. */
+  --text-hero: clamp(2.75rem, 6.2vw, 6.5rem);
+  --text-display: clamp(2rem, 4vw, 3.5rem);
+
+  --ease-spatial: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-mechanical: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* The hero and cord occupy a fixed stage; the page itself never scrolls
+   horizontally and the cord is pinned to the true top of the document. */
+@layer utilities {
+  .tracking-hero {
+    letter-spacing: -0.035em;
+  }
+
+  .tracking-display {
+    letter-spacing: -0.025em;
+  }
+
+  /* Grabbing states for the cord. Applied to <html> so the cursor persists
+     even when the pointer leaves the cord's own hit area mid-drag. */
+  .cursor-cord-grab {
+    cursor: grab;
+  }
+
+  /* Pulling a cord must never highlight the page. Suppressing selection only
+     while the cord is held keeps the hero text selectable the rest of the time. */
+  .cursor-cord-grabbing,
+  .cursor-cord-grabbing * {
+    cursor: grabbing !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+  }
+}
+
+/* Respect the visitor's motion preference. Gesture tracking still works; only
+   the decorative easing collapses. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+::selection {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
