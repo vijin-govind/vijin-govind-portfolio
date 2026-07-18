@@ -71,7 +71,7 @@ export function TempleObject({ highlight }: { highlight: boolean }) {
   return (
     <Shell>
       {/* Plinth */}
-      <mesh material={mat} position={[0, 0.03, 0]} castShadow>
+      <mesh material={mat} position={[0, 0.03, 0]}>
         <boxGeometry args={[0.72, 0.06, 0.72]} />
         <Edges threshold={15} color={INK} />
       </mesh>

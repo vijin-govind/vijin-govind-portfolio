@@ -5,6 +5,7 @@ import { useFrame } from '@react-three/fiber';
 import { Billboard, Html, Text } from '@react-three/drei';
 import * as THREE from 'three';
 import type { Project, ProjectForm } from '@/content/portfolio';
+import { playTone } from '@/lib/audio';
 import { useSpatial } from './spatialStore';
 import { DashboardObject, HologramObject, PrototypeObject, TempleObject } from './objects';
 
@@ -69,10 +70,43 @@ export function ProjectAnchor({ project }: { project: Project }) {
     }
   });
 
+  // Mouse path: hands are the signature input, but the no-camera visitor was
+  // told "this scene is mouse-driven" and then given a mouse that could only
+  // orbit — no select, no case study. Click mirrors the air tap, double-click
+  // mirrors the double tap, hover mirrors pointing. Same verbs, second input.
+  const toggleOpen = () => {
+    const opening = spatial.opened !== project.id;
+    spatial.setSelected(project.id);
+    spatial.setOpened(opening ? project.id : null);
+    spatial.announce(`${opening ? 'Opened' : 'Closed'} · ${project.title}`);
+    playTone(opening ? 760 : 360, 0.2, 0.09); // master gain is 0 when muted
+  };
+
   return (
     // userData.projectId is what the gesture raycaster walks the tree looking
     // for, so it must live on the outermost group.
-    <group ref={group} userData={{ projectId: project.id }}>
+    <group
+      ref={group}
+      userData={{ projectId: project.id }}
+      onPointerOver={(e) => {
+        e.stopPropagation();
+        spatial.setHovered(project.id);
+        document.body.style.cursor = 'pointer';
+      }}
+      onPointerOut={(e) => {
+        e.stopPropagation();
+        if (spatial.hovered === project.id) spatial.setHovered(null);
+        document.body.style.cursor = '';
+      }}
+      onClick={(e) => {
+        e.stopPropagation();
+        spatial.setSelected(project.id);
+      }}
+      onDoubleClick={(e) => {
+        e.stopPropagation();
+        toggleOpen();
+      }}
+    >
       <group ref={bob}>
         {project.form === 'temple' && <TempleObject highlight={highlight} />}
         {project.form === 'dashboard' && <DashboardObject highlight={highlight} />}
