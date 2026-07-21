@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Art and Craft | Vijin Govind</title>
+<meta name="description" content="Mural painting, travel sketching, and community craft work by Vijin Govind, including a mural at the Kerala State IT Mission and puppet design for the Manchester Day Parade.">
+<meta property="og:title" content="Art and Craft, Vijin Govind">
+<meta property="og:description" content="Mural painting, travel sketching, and hands on craft work, alongside the product design.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #ffffff;
+  --ink: #16130f;
+  --ink-2: #57524b;
+  --ink-3: #928c81;
+  --line: #eae5dd;
+  --line-2: #f5f1ea;
+  --accent: #a2531f;
+  --accent-soft: #faf0e6;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --measure: 44rem;
+  --wide: 68rem;
+}
+
+html { scroll-behavior: smooth; font-size: 16px; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+a { color: inherit; }
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: saturate(1.4) blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-back { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--ink-2); text-decoration: none; transition: color .2s; }
+.nav-back:hover { color: var(--ink); }
+.nav-back .arr { transition: transform .2s; }
+.nav-back:hover .arr { transform: translateX(-2px); }
+.nav-name { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
+.nav-name em { font-style: normal; color: var(--accent); }
+
+.wrap { width: 100%; max-width: var(--wide); margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
+.col { max-width: var(--measure); }
+
+section { padding: clamp(3.5rem, 8vw, 6rem) 0; }
+section + section { border-top: 1px solid var(--line-2); }
+
+.hero { padding-top: 132px; padding-bottom: clamp(2.5rem, 6vw, 4rem); }
+.hero-eyebrow { font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); margin-bottom: 26px; }
+h1.hero-title { font-size: clamp(2.1rem, 5.2vw, 3.4rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; color: var(--ink); max-width: 16ch; }
+.hero-sub { font-size: clamp(1.05rem, 1.8vw, 1.2rem); color: var(--ink-2); margin-top: 22px; max-width: 46ch; line-height: 1.55; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.25rem, 3vw, 2rem); }
+.piece { display: block; text-decoration: none; color: inherit; }
+.piece .frame { position: relative; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--line-2); aspect-ratio: 4/3; }
+.piece .frame img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s cubic-bezier(.22,1,.36,1); }
+.piece:hover .frame img { transform: scale(1.045); }
+.piece .frame .go {
+  position: absolute; right: 12px; top: 12px; width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(255,255,255,0.92); display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--ink); opacity: 0; transform: translateY(-4px);
+  transition: opacity .25s, transform .25s;
+}
+.piece:hover .frame .go { opacity: 1; transform: none; }
+.piece .meta { margin-top: 14px; }
+.piece h3 { font-size: 1.02rem; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+.piece .where { font-size: 12.5px; color: var(--ink-3); margin-top: 3px; }
+.piece p.desc { font-size: 0.92rem; color: var(--ink-2); margin-top: 8px; line-height: 1.5; }
+
+footer { background: #0e0d0a; color: rgba(255,255,255,0.55); text-align: center; padding: 48px 20px; }
+footer .fl { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -0.01em; }
+footer .fl em { font-style: normal; color: var(--accent); }
+footer p { font-size: 12.5px; margin-top: 8px; }
+footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
+footer a:hover { color: #fff; }
+
+@media (max-width: 640px) {
+  .grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-back" href="/"><span class="arr">←</span> Portfolio</a>
+  <span class="nav-name">Art and <em>Craft</em></span>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="col">
+      <div class="hero-eyebrow">Outside the screen</div>
+      <h1 class="hero-title">Murals, sketches, and a few things built by hand.</h1>
+      <p class="hero-sub">Before any of this was product design, it was drawing. I still paint murals, sketch when I travel, and take on the odd hands on craft project. It is where a lot of my sense of composition and colour actually comes from. Each piece below opens the original post, on Behance or Instagram.</p>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="grid">
+      <a class="piece" href="https://www.behance.net/gallery/115457517/Wall-Graffiti-Design" target="_blank" rel="noopener" aria-label="Kerala IT Mission mural, view full project on Behance">
+        <div class="frame">
+          <img src="assets/kerala-it-mission.jpg" alt="A large hand painted mural at the Kerala State IT Mission building, showing icons of connection, technology and community, unveiled at the building's launch event." loading="lazy">
+          <span class="go">↗</span>
+        </div>
+        <div class="meta">
+          <h3>Kerala IT Mission mural</h3>
+          <div class="where">Sankethika building · Behance</div>
+          <p class="desc">A wall mural for the Kerala State IT Mission's own building, themed around technology bringing people and communities closer.</p>
+        </div>
+      </a>
+
+      <a class="piece" href="https://www.instagram.com/p/By59WgXg5BD/" target="_blank" rel="noopener" aria-label="Manchester Day Parade puppet design, view on Instagram">
+        <div class="frame">
+          <img src="assets/manchester-day-parade.jpg" alt="Giant Kerala style puppets and red umbrellas made for the 2019 Manchester Day Parade, carried through a crowded street." loading="lazy">
+          <span class="go">↗</span>
+        </div>
+        <div class="meta">
+          <h3>Manchester Day Parade</h3>
+          <div class="where">Manchester, UK · Instagram</div>
+          <p class="desc">Giant biodegradable puppets built for the 2019 parade, a cultural exchange between the Kerala government and Manchester City Council.</p>
+        </div>
+      </a>
+
+      <a class="piece" href="https://www.instagram.com/vijin_govind/" target="_blank" rel="noopener" aria-label="Kerala mural art, follow on Instagram">
+        <div class="frame">
+          <img src="assets/kerala-mural.jpg" alt="A traditional Kerala mural painting in the classic style, framed and hung on a living room wall." loading="lazy">
+          <span class="go">↗</span>
+        </div>
+        <div class="meta">
+          <h3>Kerala mural painting</h3>
+          <div class="where">Traditional style · Instagram</div>
+          <p class="desc">Studying the traditional Kerala mural style, the same one you see on temple walls, painted here on canvas.</p>
+        </div>
+      </a>
+
+      <a class="piece" href="https://www.instagram.com/vijin_govind/" target="_blank" rel="noopener" aria-label="Travel sketching, follow on Instagram">
+        <div class="frame">
+          <img src="assets/travel-sketch-jatayu.jpg" alt="A pencil sketch of the Jatayu Earth Center eagle sculpture, held up in front of the real statue at sunset." loading="lazy">
+          <span class="go">↗</span>
+        </div>
+        <div class="meta">
+          <h3>Travel sketching</h3>
+          <div class="where">Jatayu Earth Center · Instagram</div>
+          <p class="desc">I sketch on location when I travel. This one is the giant Jatayu sculpture in Kerala, drawn on the spot.</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="fl">Art and <em>Craft</em></div>
+  <p>Vijin Govind</p>
+  <p><a href="/">← Back to portfolio</a></p>
+</footer>
+
+</body>
+</html>

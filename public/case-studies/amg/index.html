@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMG Driving Academy — Case Study | Vijin Govind</title>
+<meta name="description" content="A 24-hour design exercise: one dashboard for the person running a race day. Research, personas, sketches and UI by Vijin Govind.">
+<meta property="og:title" content="AMG Driving Academy — Product Design Case Study">
+<meta property="og:description" content="One screen for the person running the whole race day. A 24-hour self-directed design exercise.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #ffffff;
+  --ink: #15130f;
+  --ink-2: #56514c;
+  --ink-3: #8e877f;
+  --line: #eae6e0;
+  --line-2: #f4f1ec;
+  --accent: #c8102e;      /* AMG race red — used sparingly */
+  --accent-soft: #fbeaec;
+  --dark: #0d0d0d;
+  --dark-2: #b3aea8;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --measure: 44rem;
+  --wide: 68rem;
+}
+
+html { scroll-behavior: smooth; font-size: 16px; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+a { color: inherit; }
+
+#progress { position: fixed; top: 0; left: 0; z-index: 200; height: 2px; width: 0%; background: var(--accent); }
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: saturate(1.4) blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-back { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--ink-2); text-decoration: none; transition: color .2s; }
+.nav-back:hover { color: var(--ink); }
+.nav-back .arr { transition: transform .2s; }
+.nav-back:hover .arr { transform: translateX(-2px); }
+.nav-name { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
+.nav-name em { font-style: normal; color: var(--accent); }
+.nav-tag {
+  font-size: 11.5px; font-weight: 500; color: var(--ink-2);
+  border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px;
+}
+
+.wrap { width: 100%; max-width: var(--wide); margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
+.col { max-width: var(--measure); }
+
+section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
+section + section { border-top: 1px solid var(--line-2); }
+
+.kicker { display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 22px; }
+.kicker .n { color: var(--accent); font-variant-numeric: tabular-nums; }
+.kicker .bar { flex: 0 0 24px; height: 1px; background: var(--line); }
+
+h2.title { font-size: clamp(1.6rem, 3.6vw, 2.4rem); font-weight: 600; letter-spacing: -0.025em; line-height: 1.14; color: var(--ink); max-width: 22ch; }
+.lead { font-size: clamp(1.05rem, 1.6vw, 1.2rem); color: var(--ink-2); margin-top: 20px; line-height: 1.6; }
+p.body { font-size: 1.0625rem; color: var(--ink-2); margin-top: 1.1rem; }
+p.body strong { color: var(--ink); font-weight: 600; }
+
+/* hero */
+.hero { padding-top: 132px; padding-bottom: clamp(2.5rem, 6vw, 4rem); border-top: 0; }
+.hero-eyebrow { font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); margin-bottom: 26px; }
+h1.hero-title { font-size: clamp(2.2rem, 5.6vw, 3.8rem); font-weight: 700; letter-spacing: -0.035em; line-height: 1.05; color: var(--ink); max-width: 16ch; }
+.hero-sub { font-size: clamp(1.1rem, 2vw, 1.3rem); color: var(--ink-2); margin-top: 24px; max-width: 38ch; line-height: 1.5; }
+.hero-meta { display: grid; grid-template-columns: repeat(4, auto); gap: clamp(1.5rem, 5vw, 3rem); margin-top: 42px; padding-top: 28px; border-top: 1px solid var(--line); }
+.hero-meta dt { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.hero-meta dd { font-size: 14px; font-weight: 500; color: var(--ink); line-height: 1.45; }
+
+.hero-frame { margin-top: 44px; border-radius: 18px; overflow: hidden; background: var(--dark); }
+.hero-frame img { display: block; width: 100%; height: auto; }
+
+.note { margin-top: 28px; font-size: 13.5px; line-height: 1.55; color: var(--ink-2); background: var(--line-2); border-radius: 12px; padding: 14px 18px; }
+.note .label { flex-shrink: 0; font-weight: 600; color: var(--ink); white-space: nowrap; }
+.note b { color: var(--ink); font-weight: 600; }
+
+/* findings / list rows */
+.findings { margin-top: 40px; display: grid; gap: 0; border-top: 1px solid var(--line); }
+.finding { display: grid; grid-template-columns: 40px 1fr; gap: 20px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+.finding .fn { font-size: 13px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; padding-top: 2px; }
+.finding h3 { font-size: 1.08rem; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+.finding p { font-size: 0.96rem; color: var(--ink-2); margin-top: 6px; }
+
+/* trio / duo image grids */
+.trio { margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(0.9rem, 2vw, 1.5rem); }
+.trio figure .frame, .duo figure .frame { border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: var(--line-2); aspect-ratio: 4/3; }
+.trio figure img, .duo figure img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.trio figcaption, .duo figcaption { margin-top: 10px; font-size: 12.5px; color: var(--ink-3); }
+.duo { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.9rem, 2vw, 1.5rem); }
+.duo figure .frame { aspect-ratio: 3/4; background: #fff; }
+
+/* personas */
+.persona-grid { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.persona { display: flex; gap: 16px; }
+.persona img { width: 60px; height: 60px; border-radius: 50%; flex-shrink: 0; object-fit: cover; border: 1px solid var(--line); }
+.persona h3 { font-size: 1.02rem; font-weight: 600; color: var(--ink); }
+.persona .role { font-size: 12.5px; color: var(--ink-3); margin-top: 2px; }
+.persona p { font-size: 0.92rem; color: var(--ink-2); margin-top: 8px; line-height: 1.55; }
+
+/* figure, full width */
+figure.full { margin-top: 40px; }
+figure.full .frame { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--line-2); }
+figure.full img { display: block; width: 100%; height: auto; }
+figcaption.cap { margin-top: 14px; font-size: 13px; color: var(--ink-3); display: flex; gap: 10px; align-items: baseline; }
+figcaption.cap .tag { flex: none; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 2px 9px; border-radius: 999px; }
+
+/* sketch duo */
+.sketch-duo { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.9rem, 2vw, 1.5rem); }
+.sketch-duo figure .frame { border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #fdfdfc; }
+.sketch-duo img { display: block; width: 100%; height: auto; }
+.sketch-duo figcaption { margin-top: 10px; font-size: 12.5px; color: var(--ink-3); }
+
+/* sketch strip (storyboard accents) */
+.strip { margin-top: 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.strip .sframe { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fdfdfc; aspect-ratio: 1/1; }
+.strip img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.strip-cap { margin-top: 14px; font-size: 12.5px; color: var(--ink-3); text-align: center; }
+
+/* decisions */
+.decisions { margin-top: 8px; }
+.decision { padding: 26px 0; border-bottom: 1px solid var(--line); }
+.decision:last-child { border-bottom: 0; }
+.decision .dt { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); }
+.decision h3 { font-size: 1.12rem; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; margin-top: 4px; }
+.decision p { font-size: 0.97rem; color: var(--ink-2); margin-top: 6px; max-width: 62ch; }
+
+/* screen gallery */
+.gallery { margin-top: 40px; display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(1rem, 2.5vw, 1.75rem); }
+.shot .sframe { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--dark); }
+.shot img { display: block; width: 100%; height: auto; }
+.shot .cap { margin-top: 12px; }
+.shot .cap .cl { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.shot .cap .cl span { color: var(--accent); }
+.shot .cap p { font-size: 12.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.5; }
+
+/* dark band */
+.dark { background: var(--dark); color: #fff; border-top: 0; }
+.dark .kicker { color: var(--dark-2); }
+.dark .kicker .bar { background: rgba(255,255,255,0.14); }
+.dark h2.title { color: #fff; }
+.dark .lead { color: var(--dark-2); }
+.dark p.body { color: var(--dark-2); }
+
+/* learnings */
+.learnings { margin-top: 36px; display: grid; gap: 0; }
+.learning { padding: 26px 0; border-bottom: 1px solid var(--line); max-width: 62ch; }
+.learning:last-child { border-bottom: 0; }
+.learning h3 { font-size: 1.12rem; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+.learning p { font-size: 0.97rem; color: var(--ink-2); margin-top: 8px; }
+
+/* closing */
+.closing { text-align: center; }
+.closing .pdf-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 22px; font-size: 13.5px; font-weight: 500; color: var(--ink-2); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 3px; transition: color .2s, border-color .2s; }
+.closing .pdf-link:hover { color: var(--ink); border-color: var(--ink); }
+
+footer { background: var(--dark); color: rgba(255,255,255,0.55); text-align: center; padding: 48px 20px; }
+footer .fl { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -0.01em; }
+footer .fl em { font-style: normal; color: var(--accent); }
+footer p { font-size: 12.5px; margin-top: 8px; }
+footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
+footer a:hover { color: #fff; }
+
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+@media (max-width: 760px) {
+  .hero-meta { grid-template-columns: 1fr 1fr; gap: 22px; }
+  .trio { grid-template-columns: 1fr 1fr; }
+  .trio figure:last-child { grid-column: span 2; }
+  .duo { grid-template-columns: 1fr; }
+  .persona-grid { grid-template-columns: 1fr; gap: 28px; }
+  .sketch-duo { grid-template-columns: 1fr; }
+  .strip { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .gallery { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<nav>
+  <a class="nav-back" href="/"><span class="arr">←</span> Portfolio</a>
+  <span class="nav-name">AMG <em>Driving Academy</em></span>
+  <span class="nav-tag">Design exercise · 24 hrs</span>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap">
+    <div class="col">
+      <div class="hero-eyebrow">Product design · Self-directed brief</div>
+      <h1 class="hero-title">One screen for the person running the whole race day.</h1>
+      <p class="hero-sub">A 24-hour design exercise for the AMG Driving Academy: a dashboard for the one person who has to watch the track, the marshals, safety and the crowd, all at once.</p>
+    </div>
+
+    <dl class="hero-meta">
+      <div><dt>Role</dt><dd>Solo · research<br>to UI</dd></div>
+      <div><dt>Time</dt><dd>24 hours<br>start to finish</dd></div>
+      <div><dt>Built for</dt><dd>Race event<br>organizers</dd></div>
+      <div><dt>Surface</dt><dd>Web app<br>laptop &amp; tablet</dd></div>
+    </dl>
+
+    <figure class="hero-frame reveal">
+      <img src="assets/dashboard-tablet.jpg" alt="The AMG Driving Academy dashboard, shown on a tablet held trackside: live track map, leaderboard, marshals, streaming stats and a team chat." loading="lazy">
+    </figure>
+
+    <div class="note reveal">
+      <span class="label">Quick context — </span>this was a self-directed 24-hour brief, not a client project. There was no real organizer to interview and nothing here shipped. I'm showing it because the constraint — one day, one clear user, real screens by the end — is exactly the kind of pressure I like designing under.
+    </div>
+  </div>
+</header>
+
+<!-- 01 WHY -->
+<section id="why">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">01</span><span class="bar"></span> Why</div>
+      <h2 class="title">A race day runs on a dozen tools. It should run on one.</h2>
+      <p class="body">The brief: AMG wanted a platform for its Driving Academy — six levels of high-speed track events in Mercedes-AMG cars — that could host a race day end to end. Not just registration. The whole thing: who's on track, who's marshaling which corner, what the crowd is doing, whether the livestream is holding up.</p>
+      <p class="body">I didn't have real organizers to sit with in 24 hours, so I worked backward from the job itself: everything that actually happens to put on a race, from the first planning meeting to the post-event cleanup. <strong>That process, not a persona interview, is what told me what the dashboard needed to show.</strong></p>
+    </div>
+
+    <div class="trio reveal">
+      <figure><div class="frame"><img src="assets/research-cars.jpg" alt="Mercedes-AMG race cars on track" loading="lazy"></div><figcaption>Six levels of driving, from track day to full race.</figcaption></figure>
+      <figure><div class="frame"><img src="assets/research-marshal.jpg" alt="A marshal trackside" loading="lazy"></div><figcaption>The people who keep a race day safe.</figcaption></figure>
+      <figure><div class="frame"><img src="assets/research-crowd.jpg" alt="A race-day crowd" loading="lazy"></div><figcaption>The crowd an organizer is also responsible for.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- 02 WHO -->
+<section id="who">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">02</span><span class="bar"></span> Who I designed for</div>
+      <h2 class="title">One organizer, doing five people's jobs at once.</h2>
+      <p class="body">I sketched two organizer profiles to keep the design honest about who'd actually be using this under pressure — not real interview subjects, but two believable versions of the same job.</p>
+    </div>
+
+    <div class="persona-grid reveal">
+      <div class="persona">
+        <img src="assets/persona-sarah.jpg" alt="Illustrated avatar for the Sarah persona">
+        <div>
+          <h3>Sarah, races and festivals</h3>
+          <div class="role">5+ years organizing · urban</div>
+          <p>Detail-first. Runs races, conferences and festivals, and wants one place that shows every moving part rather than five browser tabs.</p>
+        </div>
+      </div>
+      <div class="persona">
+        <img src="assets/persona-david.jpg" alt="Illustrated avatar for the David persona">
+        <div>
+          <h3>David, large-scale sport</h3>
+          <div class="role">10+ years organizing · suburban</div>
+          <p>Handles marathons and triathlons. Needs live, trustworthy numbers so he can make a call on the spot, not after the fact.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="body reveal" style="margin-top:36px;max-width:var(--measure);">Both of them need the same thing at different volumes: <strong>one view they can trust while standing trackside, not a dashboard they have to go hunting through.</strong> That single sentence became the design brief.</p>
+  </div>
+</section>
+
+<!-- 03 WHAT / HOW -->
+<section id="what">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">03</span><span class="bar"></span> What I built</div>
+      <h2 class="title">A dashboard that puts the track first and everything else around it.</h2>
+      <p class="body">The live track map and leaderboard anchor the screen — that's the thing an organizer's eyes go to first. Marshals, safety, livestream numbers and a team chat sit around it, each one answering a question I'd have on race day: is everyone safe, is the stream up, who do I radio right now.</p>
+    </div>
+
+    <div class="findings reveal">
+      <div class="finding"><div class="fn">01</div><div><h3>Live track &amp; leaderboard</h3><p>Distance, laps, lap record, and real-time positions with gaps — the one thing that has to be right at a glance.</p></div></div>
+      <div class="finding"><div class="fn">02</div><div><h3>Marshals, on one list</h3><p>Who's covering which post and whether they're reachable, so a problem gets a name attached to it fast.</p></div></div>
+      <div class="finding"><div class="fn">03</div><div><h3>Streaming &amp; audience, live</h3><p>Viewer count and social reach next to the operational data — the public side of the event, not a separate report.</p></div></div>
+      <div class="finding"><div class="fn">04</div><div><h3>A team chat, built in</h3><p>No separate walkie-talkie app or group chat. Coordination happens on the same screen as everything else.</p></div></div>
+    </div>
+
+    <div class="sketch-duo reveal">
+      <figure><div class="frame"><img src="assets/sketch-dashboard.jpg" alt="Hand-drawn sketch of the dashboard layout, on paper" loading="lazy"></div><figcaption>First pass, on paper, before I opened Figma.</figcaption></figure>
+      <figure><div class="frame"><img src="assets/sketch-create-event.jpg" alt="Hand-drawn sketch of the create-event flow, on paper" loading="lazy"></div><figcaption>Working out the create-event flow the same way.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- 04 HOW I SOLVED IT -->
+<section id="how">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">04</span><span class="bar"></span> How I solved it</div>
+      <h2 class="title">Three decisions that made 24 hours enough.</h2>
+
+      <div class="decisions">
+        <div class="decision"><div class="dt">Scope</div><h3>I mapped three audiences, then designed for one</h3><p>Spectators, participants and organizers all have a journey through race day. I sketched all three, then deliberately narrowed to the organizer — the one person whose job is to see everything else. That single cut is what made the timeline realistic.</p></div>
+        <div class="decision"><div class="dt">Visual language</div><h3>Dark UI, for a bright, high-glare day</h3><p>Race days happen outdoors, often in full sun. A dark, high-contrast interface reads better on a tablet screen trackside than a light one would — a small decision, but the kind that matters more than it looks like it should.</p></div>
+        <div class="decision"><div class="dt">Device scope</div><h3>Laptop and tablet, on purpose, not phone</h3><p>Organizers manage from a laptop and carry a tablet. A phone screen is too small for the density this job actually needs — so rather than force a cramped mobile version, I left it out and gave the real devices the space they needed.</p></div>
+      </div>
+    </div>
+
+    <div class="wrap" style="padding:0;">
+      <div class="strip reveal">
+        <div class="sframe"><img src="assets/sketch-dispatch.jpg" alt="Sketch of race control coordinating over radio" loading="lazy"></div>
+        <div class="sframe"><img src="assets/sketch-medical.jpg" alt="Sketch of emergency response and medical support" loading="lazy"></div>
+        <div class="sframe"><img src="assets/sketch-trophy.jpg" alt="Sketch of a podium moment at the awards ceremony" loading="lazy"></div>
+      </div>
+      <p class="strip-cap">Sketching a full race day, start to finish, is what told me which screens actually mattered.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 THE SCREENS -->
+<section id="screens">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">05</span><span class="bar"></span> The screens</div>
+      <h2 class="title">The dashboard, and what sits behind it.</h2>
+      <p class="body">Five screens cover the job: the live command view, the driver's-eye track feed, the event catalogue, creating a new event, and the social numbers organizers are asked about most.</p>
+    </div>
+
+    <figure class="full reveal">
+      <div class="frame"><img src="assets/dashboard-desktop.jpg" alt="The full AMG Driving Academy organizer dashboard on desktop, showing the live track map, leaderboard, marshals, streaming stats, audience and team chat." loading="lazy"></div>
+      <figcaption class="cap"><span class="tag">Command view</span><span>The desktop dashboard — everything an organizer watches, in one screen.</span></figcaption>
+    </figure>
+
+    <div class="gallery reveal">
+      <div class="shot"><div class="sframe"><img src="assets/live-race-map.jpg" alt="Inside car view on the tablet, with a live track map overlay" loading="lazy"></div><div class="cap"><div class="cl"><span>01</span> Inside car view</div><p>A driver's-eye feed with the live track overlay — for when the organizer needs to see the race, not just the numbers.</p></div></div>
+      <div class="shot"><div class="sframe"><img src="assets/course-events.jpg" alt="Course and events screen, showing live and upcoming events" loading="lazy"></div><div class="cap"><div class="cl"><span>02</span> Course &amp; events</div><p>The event catalogue — what's live now, what's coming up, and the track it's running on.</p></div></div>
+      <div class="shot"><div class="sframe"><img src="assets/create-event.jpg" alt="Create new event screen" loading="lazy"></div><div class="cap"><div class="cl"><span>03</span> Create new event</div><p>Name, date, track, ticketing and limits, with a live track preview so the details and the map stay in view together.</p></div></div>
+      <div class="shot"><div class="sframe"><img src="assets/social-media.jpg" alt="Social media metrics screen for the event's hashtags" loading="lazy"></div><div class="cap"><div class="cl"><span>04</span> Social reach</div><p>Engagement and sentiment on the event's hashtags — the question every sponsor asks, answered without a separate report.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 OUTCOME + IMPACT -->
+<section id="outcome" class="dark">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">06</span><span class="bar"></span> Outcome</div>
+      <h2 class="title">A day's constraint, six weeks of thinking condensed into it.</h2>
+      <p class="lead">There's no usage data to show — this didn't ship, and I want to be upfront about that rather than dress it up. What I can point to is the shape of the thing: research, two personas, three journey maps, paper sketches and five finished screens, done end to end in the time it takes to plan an actual race day.</p>
+      <p class="body">The real test of the exercise was whether narrowing the scope — one user, two device sizes, one dashboard instead of a sprawling suite — would still produce something that felt complete rather than cut short. I think it does: an organizer glancing at this screen would know exactly where to look first.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 LEARNINGS -->
+<section id="learnings">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">07</span><span class="bar"></span> What I'd carry forward</div>
+      <h2 class="title">Three things a hard deadline taught me.</h2>
+
+      <div class="learnings">
+        <div class="learning reveal"><h3>Cutting the user list is a design decision, not a shortcut</h3><p>Mapping all three audiences and then committing to just the organizer is what made the scope honest. It wasn't a corner cut — it's the decision that let the rest of the day go deeper instead of wider.</p></div>
+        <div class="learning reveal"><h3>Paper first, even against a clock</h3><p>It would have been faster to open Figma straight away. Sketching the dashboard and the create-event flow by hand first was still worth the twenty minutes — it's where the actual layout decisions got made.</p></div>
+        <div class="learning reveal"><h3>A dashboard's job is triage, not decoration</h3><p>Every module earned its place by answering a real race-day question. If a screen didn't map to something I'd sketched in the storyboard, it didn't make the cut.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing">
+  <div class="wrap">
+    <div class="col" style="margin:0 auto;">
+      <div class="kicker" style="justify-content:center;"><span class="bar"></span> Thanks for reading <span class="bar"></span></div>
+      <h2 class="title" style="margin:0 auto;">That's the whole exercise, from brief to screen.</h2>
+      <a class="pdf-link" href="assets/amg-driving-academy-case-study.pdf" target="_blank" rel="noopener">See the full working board (PDF, large file) ↗</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="fl">AMG <em>Driving Academy</em></div>
+  <p>Product design exercise · Vijin Govind · 24 hours</p>
+  <p><a href="/">← Back to portfolio</a></p>
+</footer>
+
+<script>
+const bar = document.getElementById('progress');
+addEventListener('scroll', () => {
+  const h = document.documentElement;
+  bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+}, { passive: true });
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+</script>
+</body>
+</html>

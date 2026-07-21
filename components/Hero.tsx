@@ -3,6 +3,7 @@
 import { motion } from 'motion/react';
 import { experience, profile } from '@/content/portfolio';
 import { RotatingWord } from './RotatingWord';
+import { SelectedWorks } from './SelectedWorks';
 
 /**
  * The editorial half of the homepage. Everything lives in the right six columns
@@ -90,6 +91,17 @@ export function Hero() {
           ))}
         </motion.p>
 
+        <motion.div initial="hidden" animate="show" custom={2.5} variants={rise}>
+          <a
+            href="/resume.pdf"
+            download="Vijin-Govind-Resume.pdf"
+            className="mt-10 inline-flex w-fit items-center gap-2.5 rounded-full border border-ink px-6 py-3 text-sm font-medium text-ink transition-colors duration-300 hover:bg-ink hover:text-paper"
+          >
+            Download resume
+            <span aria-hidden className="text-xs">↓</span>
+          </a>
+        </motion.div>
+
         <motion.section
           initial="hidden"
           animate="show"
@@ -114,6 +126,8 @@ export function Hero() {
             ))}
           </ul>
         </motion.section>
+
+        <SelectedWorks />
       </div>
     </div>
   );
