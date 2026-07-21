@@ -3,6 +3,7 @@
 import { motion } from 'motion/react';
 import { experience, profile } from '@/content/portfolio';
 import { RotatingWord } from './RotatingWord';
+import { SelectedWorks } from './SelectedWorks';
 
 /**
  * The editorial half of the homepage. Everything lives in the right six columns
@@ -125,6 +126,8 @@ export function Hero() {
             ))}
           </ul>
         </motion.section>
+
+        <SelectedWorks />
       </div>
     </div>
   );

@@ -7,7 +7,8 @@ import * as THREE from 'three';
 import type { Project, ProjectForm } from '@/content/portfolio';
 import { playTone } from '@/lib/audio';
 import { useSpatial } from './spatialStore';
-import { DashboardObject, HologramObject, PrototypeObject, TempleObject } from './objects';
+import { DashboardObject, HologramObject, PrototypeObject } from './objects';
+import { TempleForm } from './TempleModel';
 
 /**
  * Per-archetype furniture, in metres.
@@ -108,7 +109,7 @@ export function ProjectAnchor({ project }: { project: Project }) {
       }}
     >
       <group ref={bob}>
-        {project.form === 'temple' && <TempleObject highlight={highlight} />}
+        {project.form === 'temple' && <TempleForm highlight={highlight} />}
         {project.form === 'dashboard' && <DashboardObject highlight={highlight} />}
         {project.form === 'hologram' && <HologramObject highlight={highlight} />}
         {project.form === 'prototype' && <PrototypeObject highlight={highlight} />}
