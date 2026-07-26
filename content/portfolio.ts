@@ -44,6 +44,68 @@ export const profile = {
   ],
 };
 
+export interface Work {
+  id: string;
+  title: string;
+  /** One-line descriptor: client and/or discipline. */
+  tag: string;
+  year?: string;
+  /**
+   * Cover image for the card. Cropped to the card's 4:3 tile, so keep the
+   * subject away from the far left and right edges. Falls back to the
+   * monogram placeholder when absent.
+   */
+  image?: string;
+  /**
+   * Optional destination. Left undefined until there is a real case study to
+   * link to — a card with no href renders as a non-navigating tile rather than
+   * a link that goes nowhere, and the "open" affordance only appears when a
+   * link actually exists.
+   */
+  href?: string;
+}
+
+export const selectedWorks: Work[] = [
+  {
+    id: 'mics360',
+    title: 'MICS 360',
+    tag: 'AB InBev · Enterprise application',
+    year: '2025–26',
+    image: '/works/mics360.jpg',
+    href: '/case-studies/mics360/index.html',
+  },
+  {
+    id: 'temple-address',
+    title: 'TempleAddress',
+    tag: 'Product design · Cultural',
+    year: '2024',
+    image: '/works/temple-address.jpg',
+    // Full standalone case study, hosted as a static page under public/. The
+    // explicit index.html is required: Next serves public files by exact path
+    // and does not resolve a directory to its index.
+    href: '/case-studies/temple-address/index.html',
+  },
+  {
+    id: 'amg',
+    title: 'AMG',
+    tag: 'Self exploration · Event platform',
+    image: '/works/amg.jpg',
+    href: '/case-studies/amg/index.html',
+  },
+  {
+    id: 'art-craft',
+    title: 'Art & Craft',
+    tag: 'Murals · sketching · exhibitions',
+    href: '/case-studies/art-craft/index.html',
+  },
+  {
+    id: 'film-motion',
+    title: 'Film & Motion',
+    tag: 'Short films · documentary · motion',
+    href: '/case-studies/film-motion/index.html',
+  },
+];
+
 export const experience = [
   { company: 'AB inBev', role: 'Product Designer', years: '2023–' },
   { company: 'Intelous.Ai', role: 'Product Designer', years: '2022–2023' },

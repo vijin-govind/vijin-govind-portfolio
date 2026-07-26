@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Film and Motion | Vijin Govind</title>
+<meta name="description" content="Short films, documentary, and motion work by Vijin Govind, from a weaving documentary at the Kerala State Institute of Design to the Manchester Day Parade puppets.">
+<meta property="og:title" content="Film and Motion, Vijin Govind">
+<meta property="og:description" content="Short films and documentary work, telling stories in motion.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.youtube-nocookie.com">
+<link rel="preconnect" href="https://img.youtube.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #ffffff;
+  --ink: #131315;
+  --ink-2: #58565c;
+  --ink-3: #918f95;
+  --line: #e7e6ea;
+  --line-2: #f4f3f6;
+  --accent: #3d4ce0;
+  --accent-soft: #eeefff;
+  --dark: #0b0b0d;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --measure: 44rem;
+  --wide: 68rem;
+}
+
+html { scroll-behavior: smooth; font-size: 16px; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+a { color: inherit; }
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: saturate(1.4) blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-back { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--ink-2); text-decoration: none; transition: color .2s; }
+.nav-back:hover { color: var(--ink); }
+.nav-back .arr { transition: transform .2s; }
+.nav-back:hover .arr { transform: translateX(-2px); }
+.nav-name { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
+.nav-name em { font-style: normal; color: var(--accent); }
+
+.wrap { width: 100%; max-width: var(--wide); margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
+.col { max-width: var(--measure); }
+
+section { padding: clamp(3.5rem, 8vw, 6rem) 0; }
+section + section { border-top: 1px solid var(--line-2); }
+
+.hero { padding-top: 132px; padding-bottom: clamp(2.5rem, 6vw, 4rem); }
+.hero-eyebrow { font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); margin-bottom: 26px; }
+h1.hero-title { font-size: clamp(2.1rem, 5.2vw, 3.4rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; color: var(--ink); max-width: 17ch; }
+.hero-sub { font-size: clamp(1.05rem, 1.8vw, 1.2rem); color: var(--ink-2); margin-top: 22px; max-width: 50ch; line-height: 1.55; }
+.hero-note { margin-top: 8px; font-size: 0.92rem; color: var(--ink-3); }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.25rem, 3vw, 2rem); }
+.film { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; font: inherit; color: inherit; }
+.film .frame { position: relative; aspect-ratio: 16/9; border-radius: 14px; overflow: hidden; background: var(--dark); border: 1px solid var(--line); }
+.film .frame img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s cubic-bezier(.22,1,.36,1); }
+.film:hover .frame img { transform: scale(1.045); }
+.film .play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.film .play i {
+  width: 54px; height: 54px; border-radius: 50%; background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.35); display: flex; align-items: center; justify-content: center; transition: .2s;
+}
+.film:hover .play i { background: var(--accent); border-color: var(--accent); transform: scale(1.06); }
+.film .play svg { width: 18px; height: 18px; fill: #fff; margin-left: 3px; }
+.film h3 { margin-top: 14px; font-size: 1.02rem; font-weight: 600; letter-spacing: -0.01em; }
+.film .fmeta { font-size: 12.5px; color: var(--ink-3); margin-top: 3px; }
+
+/* modal */
+.modal { position: fixed; inset: 0; z-index: 300; display: none; align-items: center; justify-content: center; padding: clamp(0.75rem, 3vw, 1.5rem); }
+.modal.open { display: flex; }
+.modal-backdrop { position: absolute; inset: 0; background: rgba(8,8,10,0.8); backdrop-filter: blur(6px); }
+.modal-box {
+  position: relative; z-index: 1; width: min(1040px, 100%); max-height: 90vh; overflow: auto;
+  background: var(--bg); border-radius: 16px; border: 1px solid var(--line);
+  display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  box-shadow: 0 40px 100px -40px rgba(0,0,0,0.6);
+}
+.modal-embed { min-width: 0; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.modal-embed iframe { width: 100%; aspect-ratio: 16/9; border: 0; display: block; }
+.modal-info { padding: clamp(1.5rem, 3vw, 2.1rem); }
+.modal-info .m-tag { font-size: 11.5px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); }
+.modal-info h3 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; margin: 10px 0 0; line-height: 1.2; }
+.modal-info .m-desc { font-size: 0.94rem; color: var(--ink-2); margin: 14px 0 22px; line-height: 1.6; }
+.m-process h4 { font-size: 11.5px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 14px; }
+.m-process ol { list-style: none; padding: 0; margin: 0; counter-reset: step; }
+.m-process li { counter-increment: step; position: relative; padding-left: 32px; margin-bottom: 13px; font-size: 0.88rem; color: var(--ink-2); line-height: 1.5; }
+.m-process li::before {
+  content: counter(step); position: absolute; left: 0; top: -1px; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--accent-soft); color: var(--accent); font-size: 11.5px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+.m-watch { display: inline-block; margin-top: 6px; font-size: 0.9rem; font-weight: 600; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+.m-watch:hover { border-color: var(--ink); }
+.m-links { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 10px 18px; }
+.m-links a { font-size: 0.85rem; color: var(--ink-2); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 1px; }
+.m-links a:hover { color: var(--ink); border-color: var(--ink); }
+.modal-close {
+  position: absolute; top: 12px; right: 12px; z-index: 3; width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(0,0,0,0.55); color: #fff; border: 0; font-size: 20px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: .2s;
+}
+.modal-close:hover { background: var(--accent); }
+
+footer { background: var(--dark); color: rgba(255,255,255,0.55); text-align: center; padding: 48px 20px; }
+footer .fl { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -0.01em; }
+footer .fl em { font-style: normal; color: var(--accent); }
+footer p { font-size: 12.5px; margin-top: 8px; }
+footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
+footer a:hover { color: #fff; }
+
+@media (max-width: 720px) {
+  .grid { grid-template-columns: 1fr; }
+  .modal-box { grid-template-columns: 1fr; max-height: 92vh; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-back" href="/"><span class="arr">←</span> Portfolio</a>
+  <span class="nav-name">Film and <em>Motion</em></span>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="col">
+      <div class="hero-eyebrow">Outside the screen</div>
+      <h1 class="hero-title">Short films and motion work, made for the same reasons I design.</h1>
+      <p class="hero-sub">A documentary on weaving, a short film, and event motion coverage in the UK. Telling a story in motion is a different discipline from an interface, but the instincts overlap more than you would think: pacing, rhythm, and knowing what to cut.</p>
+      <p class="hero-note">Click a film to watch it and see how I made it.</p>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="grid">
+      <button class="film" type="button" onclick="openFilm('DZ1_whv6Ft8')">
+        <div class="frame">
+          <img src="https://img.youtube.com/vi/DZ1_whv6Ft8/hqdefault.jpg" alt="Thread 2 Thread, a documentary about weaving" loading="lazy">
+          <span class="play"><i><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></i></span>
+        </div>
+        <h3>Thread 2 Thread</h3>
+        <div class="fmeta">The story of weaving · Documentary</div>
+      </button>
+
+      <button class="film" type="button" onclick="openFilm('oj47qtPYkgY')">
+        <div class="frame">
+          <img src="https://img.youtube.com/vi/oj47qtPYkgY/hqdefault.jpg" alt="Creator and Created is Chained, a Malayalam short film" loading="lazy">
+          <span class="play"><i><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></i></span>
+        </div>
+        <h3>Creator and Created is Chained</h3>
+        <div class="fmeta">Malayalam short film · English subtitles</div>
+      </button>
+
+      <button class="film" type="button" onclick="openFilm('OmIFdsJtsQs')">
+        <div class="frame">
+          <img src="https://img.youtube.com/vi/OmIFdsJtsQs/hqdefault.jpg" alt="Manchester Day Parade 2019" loading="lazy">
+          <span class="play"><i><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></i></span>
+        </div>
+        <h3>Manchester Day Parade 2019</h3>
+        <div class="fmeta">Event motion coverage · UK</div>
+      </button>
+
+      <button class="film" type="button" onclick="openFilm('WF7HN_gxu44')">
+        <div class="frame">
+          <img src="https://img.youtube.com/vi/WF7HN_gxu44/hqdefault.jpg" alt="In a Journey, an experimental Malayalam travel short" loading="lazy">
+          <span class="play"><i><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></i></span>
+        </div>
+        <h3>In a Journey</h3>
+        <div class="fmeta">Travel short · Oru Yathrayil</div>
+      </button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="fl">Film and <em>Motion</em></div>
+  <p>Vijin Govind</p>
+  <p><a href="/">← Back to portfolio</a></p>
+</footer>
+
+<div class="modal" id="filmModal" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Film player">
+  <div class="modal-backdrop" onclick="closeFilm()"></div>
+  <div class="modal-box">
+    <button class="modal-close" type="button" aria-label="Close" onclick="closeFilm()">×</button>
+    <div class="modal-embed" id="filmEmbed"></div>
+    <div class="modal-info">
+      <div class="m-tag" id="filmTag"></div>
+      <h3 id="filmTitle"></h3>
+      <p class="m-desc" id="filmDesc"></p>
+      <div class="m-process">
+        <h4>How I made it</h4>
+        <ol id="filmSteps"></ol>
+      </div>
+      <a class="m-watch" id="filmWatch" href="#" target="_blank" rel="noopener">Watch on YouTube ↗</a>
+      <div class="m-links" id="filmLinks"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var filmData = {
+    'DZ1_whv6Ft8': {
+      tag: 'Documentary · Kerala State Institute of Design · 2019',
+      title: 'Thread 2 Thread, the story of weaving',
+      desc: 'A documentary I filmed while studying at the Kerala State Institute of Design, following the semester long weaving projects of friends in the Textile and Apparel department. Shot on location as their work unfolded, thread by thread, from raw material to finished fabric.',
+      steps: [
+        'Followed the Textile and Apparel students through their semester, filming the weaving work as it actually happened.',
+        'Captured each stage of the process, from raw thread to woven fabric.',
+        'Shot candidly on location, letting the craft and the makers tell the story.',
+        'Edited the footage into a short documentary that traces the whole journey.'
+      ]
+    },
+    'oj47qtPYkgY': {
+      tag: 'Short film · Malayalam, English subtitles',
+      title: 'Creator and Created is Chained',
+      desc: 'A Malayalam short film about the bond, and the burden, between a maker and what they make. A quiet piece about control, dependence, and how hard it can be to let go.',
+      steps: [
+        'Started from a single idea, that creation is a chain binding both ways.',
+        'Kept the script minimal and let visuals, silence, and light carry the theme.',
+        'Blocked each scene for mood, using shadow as the emotional language.',
+        'Cut for restraint, timing the subtitles so the meaning lands without over explaining.'
+      ]
+    },
+    'OmIFdsJtsQs': {
+      tag: 'Design and motion · Manchester, UK',
+      title: 'Manchester Day Parade 2019',
+      desc: 'The 2019 Manchester Day Parade marked its tenth anniversary, bringing together forty plus community groups, floats, and giant puppets through the city centre. It was a cultural exchange between the Kerala government and Manchester City Council, run with the Manchester Malayali Association. While doing my postgraduate studies at the Kerala State Institute of Design, I was picked as one of the designers, working under lead designer Jonny alongside my classmate and co-designer Kiran, who travelled with me from Kerala to help build the puppets.',
+      steps: [
+        'Listed ten Kerala art forms and documented their styles for the puppet designs.',
+        'Sourced and exported every material we needed from Kerala to the UK.',
+        'Built the puppet skeletons on site from bamboo and paper, fully biodegradable by design.',
+        'Built out the puppets under the direction of lead designer Jonny.'
+      ],
+      links: [
+        { label: 'View on Instagram', url: 'https://www.instagram.com/p/By59WgXg5BD/' },
+        { label: 'Project on Behance', url: 'https://www.behance.net/gallery/98105707/MANCHESTER-DAY-PUPPETS' }
+      ]
+    },
+    'WF7HN_gxu44': {
+      tag: 'Experimental short · Malayalam',
+      title: 'In a Journey (Oru Yathrayil)',
+      desc: 'An unplanned, experimental short film that started on a trip with friends. There was no script. The idea just showed up mid journey, so I filmed as we travelled and shaped the story afterwards, writing the narration during the edit.',
+      steps: [
+        'No plan and no script, the idea sparked on a short trip with friends.',
+        'Filmed on the move, capturing moments as the journey actually unfolded.',
+        'Found the story afterwards in the edit, arranging footage by feeling.',
+        'Wrote and layered narration over the cut to give the thought its voice.'
+      ]
+    }
+  };
+
+  function openFilm(id) {
+    var d = filmData[id];
+    if (!d) return;
+    document.getElementById('filmTag').textContent = d.tag;
+    document.getElementById('filmTitle').textContent = d.title;
+    document.getElementById('filmDesc').textContent = d.desc;
+    var ol = document.getElementById('filmSteps');
+    ol.innerHTML = '';
+    d.steps.forEach(function (s) {
+      var li = document.createElement('li');
+      li.textContent = s;
+      ol.appendChild(li);
+    });
+    var origin = encodeURIComponent(window.location.origin);
+    document.getElementById('filmEmbed').innerHTML =
+      '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?rel=0&playsinline=1&modestbranding=1&enablejsapi=1&origin=' + origin + '" title="' + d.title + '" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+    document.getElementById('filmWatch').href = 'https://www.youtube.com/watch?v=' + id;
+    var links = document.getElementById('filmLinks');
+    links.innerHTML = '';
+    (d.links || []).forEach(function (l) {
+      var a = document.createElement('a');
+      a.href = l.url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.textContent = l.label;
+      links.appendChild(a);
+    });
+    var modal = document.getElementById('filmModal');
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeFilm() {
+    var modal = document.getElementById('filmModal');
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.getElementById('filmEmbed').innerHTML = '';
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeFilm();
+  });
+</script>
+</body>
+</html>

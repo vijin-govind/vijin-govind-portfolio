@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TempleAddress — Case Study | Vijin Govind</title>
+<meta name="description" content="Designing a pooja-booking system for temple rituals — built for devotees who have never installed an app. A product design case study by Vijin Govind.">
+<meta property="og:title" content="TempleAddress — Product Design Case Study">
+<meta property="og:description" content="A booking system for temple rituals, built for 55+ devotees, QR-first, with a WhatsApp assistant for everyone else.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #ffffff;
+  --ink: #17130f;
+  --ink-2: #57514b;
+  --ink-3: #8f877f;
+  --line: #ebe6e0;
+  --line-2: #f4f0ec;
+  --accent: #bd3f0c;      /* terracotta — used sparingly */
+  --accent-soft: #fbf1eb;
+  --dark: #17130f;
+  --dark-2: #b7ada4;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --measure: 44rem;       /* readable text column */
+  --wide: 68rem;          /* image / gallery column */
+}
+
+html { scroll-behavior: smooth; font-size: 16px; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+a { color: inherit; }
+
+/* ── progress ── */
+#progress {
+  position: fixed; top: 0; left: 0; z-index: 200;
+  height: 2px; width: 0%;
+  background: var(--accent);
+}
+
+/* ── nav ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: saturate(1.4) blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 500; color: var(--ink-2);
+  text-decoration: none; transition: color .2s;
+}
+.nav-back:hover { color: var(--ink); }
+.nav-back .arr { transition: transform .2s; }
+.nav-back:hover .arr { transform: translateX(-2px); }
+.nav-name { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
+.nav-name em { font-style: normal; color: var(--accent); }
+.nav-cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12.5px; font-weight: 500; color: var(--ink);
+  text-decoration: none; padding: 7px 14px;
+  border: 1px solid var(--line); border-radius: 999px;
+  transition: border-color .2s, background .2s;
+}
+.nav-cta:hover { border-color: var(--ink); }
+
+/* ── layout ── */
+.wrap { width: 100%; max-width: var(--wide); margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
+.col  { max-width: var(--measure); }
+
+section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
+section + section { border-top: 1px solid var(--line-2); }
+
+/* section header */
+.kicker {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--ink-3);
+  margin-bottom: 22px;
+}
+.kicker .n { color: var(--accent); font-variant-numeric: tabular-nums; }
+.kicker .bar { flex: 0 0 24px; height: 1px; background: var(--line); }
+
+h2.title {
+  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+  font-weight: 600; letter-spacing: -0.025em; line-height: 1.14;
+  color: var(--ink); max-width: 22ch;
+}
+.lead {
+  font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+  color: var(--ink-2); margin-top: 20px; line-height: 1.6;
+}
+p.body { font-size: 1.0625rem; color: var(--ink-2); margin-top: 1.1rem; }
+p.body strong { color: var(--ink); font-weight: 600; }
+
+/* ── hero ── */
+.hero { padding-top: 132px; padding-bottom: clamp(2.5rem, 6vw, 4rem); border-top: 0; }
+.hero-eyebrow {
+  font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 26px;
+}
+h1.hero-title {
+  font-size: clamp(2.4rem, 6.4vw, 4.4rem);
+  font-weight: 700; letter-spacing: -0.04em; line-height: 1.02;
+  color: var(--ink);
+}
+.hero-sub {
+  font-size: clamp(1.15rem, 2.2vw, 1.4rem);
+  color: var(--ink-2); margin-top: 26px; max-width: 34ch; line-height: 1.5;
+}
+.hero-meta {
+  display: grid; grid-template-columns: repeat(4, auto);
+  gap: clamp(1.5rem, 5vw, 3.5rem);
+  margin-top: 44px; padding-top: 30px; border-top: 1px solid var(--line);
+}
+.hero-meta dt {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px;
+}
+.hero-meta dd { font-size: 14px; font-weight: 500; color: var(--ink); line-height: 1.45; }
+
+/* stat row */
+.stat-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+  margin-top: 40px;
+}
+.stat {
+  padding: 26px clamp(1.1rem, 3vw, 2rem);
+  border-right: 1px solid var(--line);
+}
+.stat:last-child { border-right: 0; }
+.stat-num { font-size: clamp(1.7rem, 4vw, 2.3rem); font-weight: 700; letter-spacing: -0.03em; color: var(--ink); }
+.stat-num span { color: var(--accent); }
+.stat-label { font-size: 13px; color: var(--ink-2); margin-top: 4px; }
+.stat-sub { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+
+/* live embed */
+.live {
+  margin-top: 44px;
+  display: grid; grid-template-columns: 1fr; gap: 0;
+  border: 1px solid var(--line); border-radius: 18px; overflow: hidden;
+  background: var(--dark);
+}
+.live-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.live-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.85); }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: #47c272; box-shadow: 0 0 0 3px rgba(71,194,114,0.2); }
+.live-open { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.7); text-decoration: none; }
+.live-open:hover { color: #fff; }
+.live-stage { display: flex; justify-content: center; padding: 34px 20px 40px; }
+.phone {
+  width: 300px; max-width: 82vw; aspect-ratio: 300 / 620;
+  background: #0c0a08; border-radius: 42px; padding: 9px;
+  box-shadow: 0 30px 70px -30px rgba(0,0,0,0.6);
+}
+.phone-inner { position: relative; width: 100%; height: 100%; background: #fff; border-radius: 34px; overflow: hidden; }
+.phone iframe { width: 100%; height: 100%; border: 0; }
+.proto-fallback { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; padding: 28px; }
+.proto-fallback .t { font-size: 15px; font-weight: 600; color: var(--ink); }
+.proto-fallback .b { font-size: 13px; color: var(--ink-2); }
+.proto-fallback a { margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; }
+
+/* blockquote */
+blockquote {
+  margin: 2rem 0 0; padding: 4px 0 4px 24px;
+  border-left: 2px solid var(--accent);
+}
+blockquote p { font-size: clamp(1.15rem, 2.2vw, 1.45rem); font-weight: 500; color: var(--ink); line-height: 1.45; letter-spacing: -0.01em; }
+blockquote cite { display: block; margin-top: 12px; font-size: 13px; font-style: normal; color: var(--ink-3); }
+
+/* findings list */
+.findings { margin-top: 40px; display: grid; gap: 0; border-top: 1px solid var(--line); }
+.finding { display: grid; grid-template-columns: 40px 1fr; gap: 20px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+.finding .fn { font-size: 13px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; padding-top: 2px; }
+.finding h3 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+.finding p { font-size: 0.98rem; color: var(--ink-2); margin-top: 6px; }
+
+/* table */
+.table-wrap { margin-top: 36px; overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+table { width: 100%; border-collapse: collapse; min-width: 560px; }
+th, td { text-align: left; padding: 14px 18px; font-size: 13.5px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--ink); font-size: 12px; letter-spacing: 0.02em; text-transform: uppercase; background: var(--line-2); }
+td { color: var(--ink-2); }
+td:first-child { color: var(--ink); font-weight: 500; }
+tr:last-child td { border-bottom: 0; }
+
+/* pivot / two paths */
+.paths { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }
+.path { border: 1px solid var(--line); border-radius: 14px; padding: 24px; }
+.path .pl { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); }
+.path h3 { font-size: 1.15rem; font-weight: 600; color: var(--ink); margin: 6px 0 10px; letter-spacing: -0.01em; }
+.path p { font-size: 0.95rem; color: var(--ink-2); }
+
+/* steps */
+.steps { margin-top: 36px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.step { background: var(--bg); padding: 20px 22px; }
+.step .sn { font-size: 12px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
+.step h4 { font-size: 0.98rem; font-weight: 600; color: var(--ink); margin: 4px 0 4px; }
+.step p { font-size: 0.85rem; color: var(--ink-2); line-height: 1.5; }
+
+/* figure */
+figure { margin-top: 40px; }
+figure .frame { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--line-2); }
+figure img { display: block; width: 100%; height: auto; }
+figcaption { margin-top: 14px; font-size: 13px; color: var(--ink-3); display: flex; gap: 10px; align-items: baseline; }
+figcaption .tag { flex: none; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 2px 9px; border-radius: 999px; }
+
+/* screen gallery */
+.gallery { margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, 2.5vw, 1.75rem); }
+.shot .sframe { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--line-2); }
+.shot img { display: block; width: 100%; height: auto; }
+.shot .cap { margin-top: 12px; }
+.shot .cap .cl { font-size: 12px; font-weight: 600; color: var(--ink); }
+.shot .cap .cl span { color: var(--accent); }
+.shot .cap p { font-size: 12.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.5; }
+
+/* decisions */
+.decisions { margin-top: 8px; }
+.decision { display: grid; grid-template-columns: 1fr; gap: 6px; padding: 26px 0; border-bottom: 1px solid var(--line); }
+.decision:last-child { border-bottom: 0; }
+.decision .dt { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); }
+.decision h3 { font-size: 1.15rem; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+.decision p { font-size: 0.98rem; color: var(--ink-2); margin-top: 4px; max-width: 62ch; }
+
+/* dark impact */
+.dark { background: var(--dark); color: #fff; border-top: 0; }
+.dark .kicker { color: var(--dark-2); }
+.dark .kicker .bar { background: rgba(255,255,255,0.14); }
+.dark h2.title { color: #fff; }
+.dark .lead { color: var(--dark-2); }
+.impact-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; overflow: hidden; margin-top: 40px; }
+.impact-stat { background: var(--dark); padding: 28px clamp(1.1rem, 3vw, 1.8rem); }
+.impact-stat .num { font-size: clamp(1.8rem, 4.5vw, 2.5rem); font-weight: 700; letter-spacing: -0.03em; color: #fff; }
+.impact-stat .num span { color: #e5713f; }
+.impact-stat .lab { font-size: 13px; color: rgba(255,255,255,0.82); margin-top: 4px; }
+.impact-stat .sub { font-size: 12px; color: var(--dark-2); margin-top: 3px; }
+.dark blockquote { border-left-color: #e5713f; margin-top: 40px; }
+.dark blockquote p { color: #fff; }
+.dark blockquote cite { color: var(--dark-2); }
+
+/* learnings */
+.learnings { margin-top: 36px; display: grid; gap: 0; }
+.learning { padding: 26px 0; border-bottom: 1px solid var(--line); max-width: 62ch; }
+.learning:last-child { border-bottom: 0; }
+.learning h3 { font-size: 1.15rem; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+.learning p { font-size: 0.98rem; color: var(--ink-2); margin-top: 8px; }
+
+/* closing */
+.closing { text-align: center; }
+.closing a.visit { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 15px; font-weight: 600; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--accent); padding-bottom: 3px; }
+.vision-link { display: block; margin: 40px auto 0; max-width: var(--measure); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.vision-link img { display: block; width: 100%; height: auto; }
+
+/* footer */
+footer { background: var(--dark); color: rgba(255,255,255,0.55); text-align: center; padding: 48px 20px; }
+footer .fl { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -0.01em; }
+footer .fl em { font-style: normal; color: #e5713f; }
+footer p { font-size: 12.5px; margin-top: 8px; }
+footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
+footer a:hover { color: #fff; }
+
+/* reveal */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* responsive */
+@media (max-width: 760px) {
+  .nav-name { display: none; }
+  .hero-meta { grid-template-columns: 1fr 1fr; gap: 22px; }
+  .stat-row { grid-template-columns: 1fr; }
+  .stat { border-right: 0; border-bottom: 1px solid var(--line); }
+  .stat:last-child { border-bottom: 0; }
+  .paths { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; }
+  .gallery { grid-template-columns: 1fr; max-width: 22rem; margin-left: auto; margin-right: auto; }
+  .impact-stats { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<nav>
+  <a class="nav-back" href="/"><span class="arr">←</span> Portfolio</a>
+  <span class="nav-name">Temple<em>Address</em></span>
+  <a class="nav-cta" href="https://templeaddress.com" target="_blank" rel="noopener">Visit live ↗</a>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap">
+    <div class="col">
+      <div class="hero-eyebrow">Product Design · Case Study</div>
+      <h1 class="hero-title">TempleAddress</h1>
+      <p class="hero-sub">A booking system for temple rituals, built for devotees who have never installed an app.</p>
+    </div>
+
+    <dl class="hero-meta">
+      <div><dt>Role</dt><dd>Product Design<br>& Co-founder</dd></div>
+      <div><dt>Timeline</dt><dd>2024–25<br>Ongoing</dd></div>
+      <div><dt>Surfaces</dt><dd>Web · WhatsApp<br>Admin CMS</dd></div>
+      <div><dt>Status</dt><dd>Live<br>20+ temples</dd></div>
+    </dl>
+
+    <div class="stat-row reveal">
+      <div class="stat"><div class="stat-num">20<span>+</span></div><div class="stat-label">Temples onboarded</div><div class="stat-sub">No paid outreach</div></div>
+      <div class="stat"><div class="stat-num">50<span>+</span></div><div class="stat-label">Active devotees</div><div class="stat-sub">Word of mouth</div></div>
+      <div class="stat"><div class="stat-num">₹0</div><div class="stat-label">Marketing spend</div><div class="stat-sub">All organic</div></div>
+    </div>
+
+    <!-- Live product embed -->
+    <div class="live reveal">
+      <div class="live-head">
+        <span class="live-badge"><span class="live-dot"></span> Live product · interactive</span>
+        <a class="live-open" href="https://wa.templeaddress.com/explore-temples?language=en&user=919349712342&user_token=e70efc53-9fb9-4c2e-a4c1-91b415049ae2&temple_id=perayattil-ambalakkandy-subrahmanya-temple" target="_blank" rel="noopener">Open ↗</a>
+      </div>
+      <div class="live-stage">
+        <div class="phone">
+          <div class="phone-inner">
+            <iframe id="proto-frame"
+              src="https://wa.templeaddress.com/explore-temples?language=en&user=919349712342&user_token=e70efc53-9fb9-4c2e-a4c1-91b415049ae2&temple_id=perayattil-ambalakkandy-subrahmanya-temple"
+              title="TempleAddress — live booking prototype" loading="lazy" allow="payment"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation-by-user-activation"></iframe>
+            <div class="proto-fallback" id="proto-fallback">
+              <div class="t">Open the live product</div>
+              <div class="b">Fully interactive. If it doesn't load inline, open it directly.</div>
+              <a href="https://wa.templeaddress.com/explore-temples?language=en&user=919349712342&user_token=e70efc53-9fb9-4c2e-a4c1-91b415049ae2&temple_id=perayattil-ambalakkandy-subrahmanya-temple" target="_blank" rel="noopener">Open live product ↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- 01 PROBLEM -->
+<section id="problem">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">01</span><span class="bar"></span> The problem</div>
+      <h2 class="title">To book a temple ritual, you make a phone call.</h2>
+      <p class="body">Temple information lives in Facebook groups, printed notices and WhatsApp forwards. When someone wants to book a pooja, they call the temple office and read out the details: which offering, what date, the devotee's name, their birth star. The office writes it in a ledger.</p>
+      <p class="body">The person doing this is usually over 55, more comfortable in Malayalam than English, and has scanned a QR code before but never installed an app. On the temple side, one secretary fields <strong>30–40 of these calls a day</strong>, most of them just asking for pooja timings.</p>
+      <blockquote class="reveal">
+        <p>"I had to call my cousin's friend just to find out what time the morning pooja starts. There should be an easier way."</p>
+        <cite>Devotee, 58 · Thrissur · user interview</cite>
+      </blockquote>
+    </div>
+
+    <figure class="reveal">
+      <div class="frame"><img src="assets/flow-before-traditional.png" alt="The existing pooja booking journey for a 55+ devotee: travel to the temple, wait in a long queue, give details by hand, no digital payment — nine effort-heavy steps ending in exhaustion." loading="lazy"></div>
+      <figcaption><span class="tag">Before</span><span>The journey today: nine steps for a 55+ devotee, ending in fatigue rather than devotion.</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 02 RESEARCH -->
+<section id="research">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">02</span><span class="bar"></span> Research</div>
+      <h2 class="title">Eight weeks with devotees, priests and temple offices.</h2>
+      <p class="body">I ran interviews with 50+ devotees and 10+ temple administrators, sat in on bookings on-site, and read the temple WhatsApp groups people actually use. Four findings shaped every decision that followed.</p>
+
+      <div class="findings reveal">
+        <div class="finding"><div class="fn">01</div><div><h3>Trust comes before usability</h3><p>People didn't avoid digital booking because it was hard. They avoided it because they couldn't tell if a page was the real temple. An unverified Facebook page made them fear the offering wouldn't actually happen.</p></div></div>
+        <div class="finding"><div class="fn">02</div><div><h3>The phone call is the existing interface</h3><p>The thing I was replacing wasn't another app — it was a conversation. "Which pooja? What time? Name is X, star is Y, book for my family too?" That call became the benchmark, not a generic booking form.</p></div></div>
+        <div class="finding"><div class="fn">03</div><div><h3>The birth star is not optional</h3><p>Every administrator said it: without the devotee's nakshatram, the priest can't personalise the ritual. Standard booking systems drop this field. It had to be required, and painless to enter.</p></div></div>
+        <div class="finding"><div class="fn">04</div><div><h3>The real user is 55+, not 25</h3><p>On-site visitors were mostly 50–75, with limited smartphone familiarity. Designing for them — not a tech-savvy version of them — changed every screen.</p></div></div>
+      </div>
+
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Method</th><th>Who</th><th>What it told us</th></tr></thead>
+          <tbody>
+            <tr><td>Interviews</td><td>50+ devotees, 30–75 yrs</td><td>Trust, not usability, is the adoption barrier</td></tr>
+            <tr><td>Stakeholder sessions</td><td>10+ temple administrators</td><td>~70% of calls are repeat schedule queries</td></tr>
+            <tr><td>Contextual inquiry</td><td>On-site visitors</td><td>Elderly users dominate; 55+ is the median</td></tr>
+            <tr><td>Community observation</td><td>Temple WhatsApp groups</td><td>Information is fragmented and unverifiable</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 PIVOT -->
+<section id="pivot">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">03</span><span class="bar"></span> The pivot</div>
+      <h2 class="title">The first version failed testing. That was the useful part.</h2>
+      <p class="body">We first built the obvious thing: a full web portal and a companion mobile app. Rich UI, browsing, filters — what we assumed a modern temple platform should be. Then we put it in front of elderly devotees for acceptance testing.</p>
+      <p class="body">It didn't work. Too many steps, unfamiliar patterns. One participant couldn't finish a booking without help. Another looked for the phone number to call instead. A committee member reframed the whole project in one sentence:</p>
+      <blockquote class="reveal">
+        <p>"They don't want a new app. They want the experience they already trust — just faster. They trust WhatsApp. They trust scanning the QR at the temple gate."</p>
+        <cite>Temple committee member · Thrissur · second round</cite>
+      </blockquote>
+      <p class="body">So we rebuilt around two ways people already behave, and shipped both.</p>
+
+      <div class="paths reveal">
+        <div class="path">
+          <div class="pl">On-site</div>
+          <h3>QR → web</h3>
+          <p>A printed QR at the temple entrance. Scan with the native camera — no download, no URL to type — and land on that temple's booking page. Being physically at the temple is the trust signal.</p>
+        </div>
+        <div class="path">
+          <div class="pl">Remote</div>
+          <h3>WhatsApp assistant</h3>
+          <p>For devotees who never open a browser — NRIs, rural users — a WhatsApp assistant answers in their language and starts the booking, then hands off to the web page for payment via a single deep link.</p>
+        </div>
+      </div>
+      <p class="body">A fully self-contained WhatsApp checkout was expensive to build and maintain, so the hybrid handoff — chat for discovery, web for the final steps — kept the backend simple while keeping the experience continuous.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 FLOW -->
+<section id="flow">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">04</span><span class="bar"></span> The flow</div>
+      <h2 class="title">Eight steps, mapped to the phone call they replace.</h2>
+      <p class="body">Each step matches something the devotee would have said on the phone. Median completion is under two minutes.</p>
+    </div>
+
+    <div class="steps reveal">
+      <div class="step"><div class="sn">01</div><h4>Scan QR at temple</h4><p>Native camera, no install, no typing. Lands instantly.</p></div>
+      <div class="step"><div class="sn">02</div><h4>Temple page</h4><p>Deity, timings, offerings. Physical presence verifies trust.</p></div>
+      <div class="step"><div class="sn">03</div><h4>Choose offering</h4><p>A list, not a grid — read like a menu. Name, time, price.</p></div>
+      <div class="step"><div class="sn">04</div><h4>Phone + OTP</h4><p>Passwordless, and only after choosing — intent before friction.</p></div>
+      <div class="step"><div class="sn">05</div><h4>Add devotees</h4><p>Name + birth star. Repeat for family in the same pattern.</p></div>
+      <div class="step"><div class="sn">06</div><h4>Pick date</h4><p>Next seven days up front; full month behind a toggle.</p></div>
+      <div class="step"><div class="sn">07</div><h4>Review</h4><p>Temple, offering, devotees, date, total. No surprises.</p></div>
+      <div class="step"><div class="sn">08</div><h4>Pay via UPI</h4><p>Booking ID and the temple's own number on confirmation.</p></div>
+    </div>
+
+    <div class="col">
+      <figure class="reveal">
+        <div class="frame"><img src="assets/flow-after-templeaddress.png" alt="Booking a pooja via TempleAddress: scan the temple QR, open the temple page, choose a pooja, enter devotee details, pay, and get confirmation — eight calm steps ending happy and blessed." loading="lazy"></div>
+        <figcaption><span class="tag">After</span><span>The same devotee, QR to confirmation, in eight calm steps.</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- 05 SHIPPED UI -->
+<section id="ui">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">05</span><span class="bar"></span> The shipped product</div>
+      <h2 class="title">Temple page to booking, in the real interface.</h2>
+      <p class="body">Bilingual (Malayalam + English), mobile-first, in a terracotta and gold palette drawn from Kerala temple tradition — chosen so it reads as sacred, not as a generic booking tool.</p>
+    </div>
+
+    <div class="gallery reveal">
+      <div class="shot"><div class="sframe"><img src="assets/ui-temple-detail.png" alt="Temple detail page" loading="lazy"></div><div class="cap"><div class="cl"><span>01</span> Temple page</div><p>The QR landing page. Timings at a glance, a verified badge, and just two actions: Book Pooja, Donate.</p></div></div>
+      <div class="shot"><div class="sframe"><img src="assets/ui-pooja-list.png" alt="Pooja listing with filters" loading="lazy"></div><div class="cap"><div class="cl"><span>02</span> Choose offering</div><p>Poojas as a scannable list, not a grid. Each shows price, mode and what's included.</p></div></div>
+      <div class="shot"><div class="sframe"><img src="assets/ui-phone-auth.png" alt="Phone number auth" loading="lazy"></div><div class="cap"><div class="cl"><span>03</span> Phone auth</div><p>A WhatsApp-verified number in a bottom sheet, after the pooja is chosen — intent before friction.</p></div></div>
+      <div class="shot"><div class="sframe"><img src="assets/ui-pooja-booking.png" alt="Pooja booking detail" loading="lazy"></div><div class="cap"><div class="cl"><span>04</span> Confirm offering</div><p>Exact pooja, temple, timing and price in one card. Add Devotee is the single next step.</p></div></div>
+      <div class="shot"><div class="sframe"><img src="assets/ui-add-devotee.png" alt="Add devotee with Nakshatra" loading="lazy"></div><div class="cap"><div class="cl"><span>05</span> Add devotee</div><p>Name plus the ritual identifiers a priest needs — searchable, not free-typed. "Remember" saves the profile.</p></div></div>
+      <div class="shot"><div class="sframe"><img src="assets/ui-review.png" alt="Review devotees" loading="lazy"></div><div class="cap"><div class="cl"><span>06</span> Review</div><p>Devotees listed and removable. The same pattern repeats for families, so cognitive load stays flat.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 DECISIONS -->
+<section id="decisions">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">06</span><span class="bar"></span> Key decisions</div>
+      <h2 class="title">Four choices that came straight from research.</h2>
+
+      <div class="decisions">
+        <div class="decision"><div class="dt">Cultural fit</div><h3>Birth star as a required, searchable field</h3><p>There are 27 nakshatrams — too many for a dropdown an elderly user would scroll. It's a search-as-you-type field, required, because the ritual depends on it. No other booking tool asks for it; the priests need it.</p></div>
+        <div class="decision"><div class="dt">Legibility</div><h3>A list, not a grid, for offerings</h3><p>In testing, older users read a vertical list far more reliably than a grid of cards. It looks like the temple's printed menu, which is what they expect.</p></div>
+        <div class="decision"><div class="dt">Access</div><h3>No app install, by strategy</h3><p>App-store download is a hard drop-off point: find the app, make an account, grant permissions. The QR at the gate becomes the interface instead. Any camera phone can book in under two minutes.</p></div>
+        <div class="decision"><div class="dt">Sequencing</div><h3>Authentication after selection, not before</h3><p>The phone-and-OTP step appears only once the devotee has chosen a pooja, so they're already committed. Asking to log in first would lose the exact user we were designing for.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 WHATSAPP -->
+<section id="ai">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">07</span><span class="bar"></span> The WhatsApp assistant</div>
+      <h2 class="title">For the devotee who never opens a browser.</h2>
+      <p class="body">For many devotees — especially overseas family and rural users — WhatsApp is the one digital surface they fully trust. The assistant answers temple questions and starts a booking in natural language, in Malayalam, Tamil or Hindi, pulling live temple data, then hands off to the web page for payment.</p>
+    </div>
+
+    <div class="col">
+      <figure class="reveal">
+        <div class="frame"><img src="assets/wa-conversation.png" alt="The live TempleAddress WhatsApp assistant across four screens: choose language, welcome, a service menu, and a temple discovery reply with a photo and a view link." loading="lazy"></div>
+        <figcaption><span class="tag">Live</span><span>The real assistant, end to end: language → welcome → menu → temple discovery. These are live screens, not mockups.</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- 08 IMPACT -->
+<section id="impact" class="dark">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">08</span><span class="bar"></span> Impact</div>
+      <h2 class="title">Early validation, with no marketing spend.</h2>
+      <p class="lead">Every temple and devotee came from temples sharing their own QR codes. That's the signal that matters: if administrators are promoting it themselves, it's doing real work for them.</p>
+    </div>
+
+    <div class="impact-stats reveal">
+      <div class="impact-stat"><div class="num">20<span>+</span></div><div class="lab">Temples onboarded</div><div class="sub">Committees referred neighbours</div></div>
+      <div class="impact-stat"><div class="num">50<span>+</span></div><div class="lab">Active devotees</div><div class="sub">Repeat users, not curiosity</div></div>
+      <div class="impact-stat"><div class="num">20<span>+</span></div><div class="lab">Monthly bookings</div><div class="sub">Recurring, growing month on month</div></div>
+    </div>
+
+    <div class="col">
+      <blockquote class="reveal">
+        <p>"Earlier I was getting 30 to 40 calls a day, just for pooja timings and booking. Now most of that comes through the app. I can focus on the temple work instead of the phone."</p>
+        <cite>Temple secretary · Thrissur district · three months after onboarding</cite>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- 09 LEARNINGS -->
+<section id="learnings">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">09</span><span class="bar"></span> What I took from it</div>
+      <h2 class="title">Three things that will carry to the next project.</h2>
+
+      <div class="learnings">
+        <div class="learning reveal"><h3>Ask what the existing UX is</h3><p>Instead of "what do you want from a booking system," I asked "walk me through how you book a pooja today." The answer — a phone call — became the benchmark. Match the conversation, don't reinvent it.</p></div>
+        <div class="learning reveal"><h3>Design for the actual user, not the aspirational one</h3><p>It was tempting to design for a younger, tech-fluent devotee. The real user was a 65-year-old who could scan a QR but had never downloaded an app. That constraint made the product better for everyone.</p></div>
+        <div class="learning reveal"><h3>Trust is built by visible accountability</h3><p>Putting the temple's own phone number on the confirmation screen did more for adoption than any interface polish. In a culturally sensitive product, you earn trust by being answerable at every step.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing">
+  <div class="wrap">
+    <div class="col" style="margin:0 auto;">
+      <div class="kicker" style="justify-content:center;"><span class="bar"></span> The vision <span class="bar"></span></div>
+      <h2 class="title" style="margin:0 auto;">From one temple's gate to India's spiritual infrastructure.</h2>
+      <p class="body" style="margin-left:auto;margin-right:auto;">Discovery, booking and temple operations are live. Priest and artist directories, festival tourism and multi-state coverage are next.</p>
+    </div>
+    <a class="vision-link reveal" href="https://templeaddress.com" target="_blank" rel="noopener" aria-label="Visit templeaddress.com">
+      <img src="assets/vision-banner.png" alt="TempleAddress — building India's spiritual infrastructure platform, from discovery to booking to temple operations.">
+    </a>
+    <div style="text-align:center;margin-top:32px;">
+      <a class="visit" href="https://templeaddress.com" target="_blank" rel="noopener">Visit templeaddress.com ↗</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="fl">Temple<em>Address</em></div>
+  <p>Product design case study · Vijin Govind · 2024–25</p>
+  <p><a href="https://templeaddress.com" target="_blank" rel="noopener">templeaddress.com</a></p>
+</footer>
+
+<script>
+// Scroll progress
+const bar = document.getElementById('progress');
+addEventListener('scroll', () => {
+  const h = document.documentElement;
+  bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+}, { passive: true });
+
+// Reveal on scroll
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
+// Live-embed fallback: if the iframe can't be reached, show the open-directly card.
+(() => {
+  const frame = document.getElementById('proto-frame');
+  const fb = document.getElementById('proto-fallback');
+  if (!frame || !fb) return;
+  let loaded = false;
+  frame.addEventListener('load', () => { loaded = true; });
+  setTimeout(() => { if (!loaded) { frame.style.display = 'none'; fb.style.display = 'flex'; } }, 6000);
+})();
+</script>
+</body>
+</html>

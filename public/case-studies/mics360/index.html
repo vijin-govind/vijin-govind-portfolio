@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MICS 360, Case Study | Vijin Govind</title>
+<meta name="description" content="Moving a global compliance platform off Power Apps and onto a modern web app, for thousands of people who use it every quarter. Product design case study by Vijin Govind.">
+<meta property="og:title" content="MICS 360, Product Design Case Study">
+<meta property="og:description" content="A compliance platform migration for AB InBev. Same governance rules, a much faster way to get through them.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #ffffff;
+  --ink: #14130f;
+  --ink-2: #57534c;
+  --ink-3: #918b81;
+  --line: #eae6de;
+  --line-2: #f4f1ea;
+  --accent: #a3790a;
+  --accent-soft: #fbf3e1;
+  --dark: #0e0d0a;
+  --dark-2: #b8b0a1;
+  --gold: #f5c518;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --measure: 44rem;
+  --wide: 68rem;
+}
+
+html { scroll-behavior: smooth; font-size: 16px; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+a { color: inherit; }
+
+#progress { position: fixed; top: 0; left: 0; z-index: 200; height: 2px; width: 0%; background: var(--accent); }
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: saturate(1.4) blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-back { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--ink-2); text-decoration: none; transition: color .2s; }
+.nav-back:hover { color: var(--ink); }
+.nav-back .arr { transition: transform .2s; }
+.nav-back:hover .arr { transform: translateX(-2px); }
+.nav-name { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
+.nav-name em { font-style: normal; color: var(--accent); }
+.nav-tag { font-size: 11.5px; font-weight: 500; color: var(--ink-2); border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px; }
+
+.wrap { width: 100%; max-width: var(--wide); margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
+.col { max-width: var(--measure); }
+
+section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
+section + section { border-top: 1px solid var(--line-2); }
+
+.kicker { display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 22px; }
+.kicker .n { color: var(--accent); font-variant-numeric: tabular-nums; }
+.kicker .bar { flex: 0 0 24px; height: 1px; background: var(--line); }
+
+h2.title { font-size: clamp(1.6rem, 3.6vw, 2.4rem); font-weight: 600; letter-spacing: -0.025em; line-height: 1.14; color: var(--ink); max-width: 22ch; }
+.lead { font-size: clamp(1.05rem, 1.6vw, 1.2rem); color: var(--ink-2); margin-top: 20px; line-height: 1.6; }
+p.body { font-size: 1.0625rem; color: var(--ink-2); margin-top: 1.1rem; }
+p.body strong { color: var(--ink); font-weight: 600; }
+
+/* hero */
+.hero { padding-top: 132px; padding-bottom: clamp(2.5rem, 6vw, 4rem); border-top: 0; }
+.hero-eyebrow { font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); margin-bottom: 26px; }
+h1.hero-title { font-size: clamp(2.2rem, 5.6vw, 3.7rem); font-weight: 700; letter-spacing: -0.035em; line-height: 1.08; color: var(--ink); max-width: 18ch; }
+.hero-sub { font-size: clamp(1.1rem, 2vw, 1.3rem); color: var(--ink-2); margin-top: 24px; max-width: 40ch; line-height: 1.5; }
+.hero-meta { display: grid; grid-template-columns: repeat(4, auto); gap: clamp(1.5rem, 5vw, 3rem); margin-top: 42px; padding-top: 28px; border-top: 1px solid var(--line); }
+.hero-meta dt { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.hero-meta dd { font-size: 14px; font-weight: 500; color: var(--ink); line-height: 1.45; }
+
+.hero-frame { margin-top: 44px; border-radius: 18px; overflow: hidden; background: var(--dark); }
+.hero-frame img { display: block; width: 100%; height: auto; }
+
+.note { margin-top: 28px; font-size: 13.5px; line-height: 1.55; color: var(--ink-2); background: var(--line-2); border-radius: 12px; padding: 14px 18px; }
+.note .label { font-weight: 600; color: var(--ink); }
+
+/* fact row */
+.fact-row { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin-top: 40px; }
+.fact { padding: 26px clamp(1rem, 3vw, 1.8rem); border-right: 1px solid var(--line); }
+.fact:last-child { border-right: 0; }
+.fact-num { font-size: clamp(1.6rem, 4vw, 2.1rem); font-weight: 700; letter-spacing: -0.03em; color: var(--ink); }
+.fact-num span { color: var(--accent); }
+.fact-label { font-size: 12.5px; color: var(--ink-2); margin-top: 4px; }
+
+/* two column lists */
+.pair { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 4vw, 3rem); }
+.pair h3 { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+.pair ul { list-style: none; }
+.pair li { font-size: 0.96rem; color: var(--ink-2); padding: 12px 0; border-bottom: 1px solid var(--line); }
+.pair li:last-child { border-bottom: 0; }
+
+/* findings / decisions rows */
+.findings { margin-top: 40px; display: grid; gap: 0; border-top: 1px solid var(--line); }
+.finding { display: grid; grid-template-columns: 40px 1fr; gap: 20px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+.finding .fn { font-size: 13px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; padding-top: 2px; }
+.finding h3 { font-size: 1.08rem; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+.finding p { font-size: 0.96rem; color: var(--ink-2); margin-top: 6px; }
+
+/* figure, full width */
+figure.full { margin-top: 40px; }
+figure.full .frame { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--line-2); }
+figure.full img { display: block; width: 100%; height: auto; }
+figcaption.cap { margin-top: 14px; font-size: 13px; color: var(--ink-3); display: flex; gap: 10px; align-items: baseline; }
+figcaption.cap .tag { flex: none; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 2px 9px; border-radius: 999px; }
+
+/* module chips */
+.modules { margin-top: 36px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.module { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; font-size: 13.5px; color: var(--ink); background: var(--line-2); }
+.module span { display: block; font-size: 10.5px; color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+
+/* decisions */
+.decisions { margin-top: 8px; }
+.decision { padding: 26px 0; border-bottom: 1px solid var(--line); }
+.decision:last-child { border-bottom: 0; }
+.decision .dt { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); }
+.decision h3 { font-size: 1.12rem; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; margin-top: 4px; }
+.decision p { font-size: 0.97rem; color: var(--ink-2); margin-top: 6px; max-width: 62ch; }
+
+/* dark band */
+.dark { background: var(--dark); color: #fff; border-top: 0; }
+.dark .kicker { color: var(--dark-2); }
+.dark .kicker .bar { background: rgba(255,255,255,0.14); }
+.dark h2.title { color: #fff; }
+.dark .lead { color: var(--dark-2); }
+.dark p.body { color: var(--dark-2); }
+.dark .fact-row { border-color: rgba(255,255,255,0.14); }
+.dark .fact { border-color: rgba(255,255,255,0.14); }
+.dark .fact-num { color: #fff; }
+.dark .fact-num span { color: var(--gold); }
+.dark .fact-label { color: var(--dark-2); }
+
+/* quotes */
+.voices { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.voice { border: 1px solid var(--line); border-radius: 14px; padding: 24px; }
+.voice p { font-size: 1rem; color: var(--ink); line-height: 1.5; }
+.voice .who { margin-top: 16px; font-size: 12.5px; color: var(--ink-3); }
+.voice .who b { color: var(--ink-2); font-weight: 600; }
+
+/* learnings */
+.learnings { margin-top: 36px; display: grid; gap: 0; }
+.learning { padding: 26px 0; border-bottom: 1px solid var(--line); max-width: 62ch; }
+.learning:last-child { border-bottom: 0; }
+.learning h3 { font-size: 1.12rem; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+.learning p { font-size: 0.97rem; color: var(--ink-2); margin-top: 8px; }
+
+/* closing */
+.closing { text-align: center; }
+
+footer { background: var(--dark); color: rgba(255,255,255,0.55); text-align: center; padding: 48px 20px; }
+footer .fl { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -0.01em; }
+footer .fl em { font-style: normal; color: var(--gold); }
+footer p { font-size: 12.5px; margin-top: 8px; }
+footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
+footer a:hover { color: #fff; }
+
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+@media (max-width: 760px) {
+  .hero-meta { grid-template-columns: 1fr 1fr; gap: 22px; }
+  .fact-row { grid-template-columns: 1fr 1fr; }
+  .fact { border-bottom: 1px solid var(--line); }
+  .fact:nth-child(2n) { border-right: 0; }
+  .pair { grid-template-columns: 1fr; gap: 28px; }
+  .modules { grid-template-columns: 1fr 1fr; }
+  .voices { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<nav>
+  <a class="nav-back" href="/"><span class="arr">←</span> Portfolio</a>
+  <span class="nav-name">MICS <em>360</em></span>
+  <span class="nav-tag">AB InBev · Product design</span>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap">
+    <div class="col">
+      <div class="hero-eyebrow">Product design · Enterprise platform migration</div>
+      <h1 class="hero-title">Moving a compliance platform without losing a single rule.</h1>
+      <p class="hero-sub">MICS 360 is the tool thousands of people at AB InBev use every quarter to run compliance checks. I helped move it off an aging Power Apps setup and onto a proper web app, without breaking the governance it exists to protect.</p>
+    </div>
+
+    <dl class="hero-meta">
+      <div><dt>Role</dt><dd>Lead product<br>designer</dd></div>
+      <div><dt>Time</dt><dd>6 months</dd></div>
+      <div><dt>Scale</dt><dd>5,000+ users<br>7 global zones</dd></div>
+      <div><dt>Move</dt><dd>Power Apps to<br>a web app</dd></div>
+    </dl>
+
+    <figure class="hero-frame reveal">
+      <img src="assets/ui-landing.jpg" alt="The MICS 360 landing screen on a desktop monitor, a dark interface with the AB InBev brand and a welcome message for a signed in user." loading="lazy">
+    </figure>
+
+    <div class="note reveal">
+      <span class="label">A note on what is shown here.</span> This is a real project I worked on at AB InBev. The screens on this page are recreated and simplified for this write up, since I cannot show the live product with real data. The story and the decisions are accurate.
+    </div>
+  </div>
+</header>
+
+<!-- 01 THE PROBLEM -->
+<section id="problem">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">01</span><span class="bar"></span> The problem</div>
+      <h2 class="title">A tool people needed, that had started working against them.</h2>
+      <p class="body">MICS 360 runs the internal control checks that keep AB InBev compliant across its global operations. Twelve separate tools for things like self assessment, control testing, and issue tracking, used by five thousand people across seven zones, all built on Power Apps.</p>
+      <p class="body">The problem was never what the platform did. It was how long everything took to do. Logging in was slow. Finding the right module meant hunting through a menu. Forms held their errors until the very end, so a small mistake could cost someone several minutes of redone work.</p>
+    </div>
+
+    <div class="pair reveal">
+      <div>
+        <h3>What people ran into</h3>
+        <ul>
+          <li>Slow logins and slow screens</li>
+          <li>No clear way to find the right module</li>
+          <li>Little visibility into what was pending</li>
+          <li>Long forms with validation shown too late</li>
+          <li>Records piling up with no easy way to sort them</li>
+        </ul>
+      </div>
+      <div>
+        <h3>What the business was watching</h3>
+        <ul>
+          <li>Reporting cycles slipping</li>
+          <li>Rising cost to maintain the old system</li>
+          <li>A real risk that people would resist the move</li>
+          <li>Thirty nine compliance controls that could not be simplified away</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 WHO -->
+<section id="who">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">02</span><span class="bar"></span> Who I designed for</div>
+      <h2 class="title">One person, three roles, the same quarterly deadline.</h2>
+      <p class="body">Most people on the platform fall into one of three roles. A Control Owner completes the self assessment for their area. A Tester checks that controls are actually working. A Reviewer signs off. All three needed the same thing done faster: log in, find their pending work, complete it, and trust that the system caught their mistakes before submission, not after.</p>
+      <p class="body">I kept a simple picture of a Control Owner in mind while designing, someone with a quarterly self assessment to finish, KPIs to update, and evidence to upload, on top of their actual job.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 THE FLOW -->
+<section id="flow">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">03</span><span class="bar"></span> The flow</div>
+      <h2 class="title">The same ten steps, rebuilt end to end.</h2>
+      <p class="body">Self assessment is the most used workflow on the platform, so it is the one I mapped in full. Both versions below cover the same journey: log in, find the assessment, update every KPI, attach evidence, and submit. Nothing about what the job requires changed. Almost everything about how long it took did.</p>
+    </div>
+
+    <figure class="full reveal">
+      <div class="frame"><img src="assets/before-migration.jpg" alt="The ten step self assessment flow before migration, in Power Apps, with pain points noted at each step: slow login, no centralized navigation, cluttered dashboard, complex KPI dependencies, and errors shown only at the end." loading="lazy"></div>
+      <figcaption class="cap"><span class="tag">Before</span><span>Power Apps. Ten steps, most of them slower than they needed to be, ending with errors the person only found out about after trying to submit.</span></figcaption>
+    </figure>
+
+    <figure class="full reveal" style="margin-top:32px;">
+      <div class="frame"><img src="assets/after-migration.jpg" alt="The same ten step self assessment flow after migration, on the new web app, with single sign on, a unified dashboard, guided forms, real time validation, and one click submission." loading="lazy"></div>
+      <figcaption class="cap"><span class="tag">After</span><span>The same ten steps, now with single sign on, one dashboard for everything, and validation that shows up while you are typing instead of after you try to leave.</span></figcaption>
+    </figure>
+
+    <p class="body reveal" style="margin-top:32px;">Login dropped from around a minute to about fifteen seconds. Finding the right module went from a few minutes of hunting to a single click. Nothing on this list was a small tweak. Each one came from watching where a Control Owner actually lost time.</p>
+  </div>
+</section>
+
+<!-- 04 WHAT I DECIDED -->
+<section id="decisions">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">04</span><span class="bar"></span> What I decided</div>
+      <h2 class="title">Four decisions that shaped the new platform.</h2>
+
+      <div class="decisions">
+        <div class="decision"><div class="dt">Navigation</div><h3>One hub instead of twelve doors</h3><p>People used to open several disconnected tools to do related work. Everything now sits behind a single homepage, with direct links into every module, so getting to the right place stopped being a task of its own.</p></div>
+        <div class="decision"><div class="dt">Structure</div><h3>Splitting dense workspaces into clear tabs</h3><p>A control record used to be one long page holding general details, KPI numbers, and evidence all at once. I split it into tabs, so a person only sees the part of the record they are working on at that moment.</p></div>
+        <div class="decision"><div class="dt">Validation</div><h3>Catching mistakes while they happen</h3><p>The old system waited until submission to flag a missing field or a broken KPI dependency. The new one checks as you go, right where you are working, so a mistake gets fixed in seconds instead of discovered five steps later.</p></div>
+        <div class="decision"><div class="dt">Scale</div><h3>A proper path for bulk updates</h3><p>Some teams manage hundreds of records at once. Editing them one at a time in a form was never realistic. The new flow lets people export data, edit it offline, and re-upload it, with only the rows that failed coming back for a fix.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 THE SCREENS -->
+<section id="screens">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">05</span><span class="bar"></span> The screens</div>
+      <h2 class="title">Dashboard, control record, and the import flow.</h2>
+      <p class="body">A quick look at the everyday screens: signing in, the dashboard someone lands on, the self assessment workspace with its tabs, and the bulk import and history views for teams handling larger volumes.</p>
+    </div>
+
+    <figure class="full reveal">
+      <div class="frame"><img src="assets/ui-screens.jpg" alt="A set of MICS 360 screens after migration: sign in, the dashboard with self assessment and KPI status cards and a pending items table, the edit control workspace with general information, KPI, and evidence tabs, plus the import data and import history views." loading="lazy"></div>
+      <figcaption class="cap"><span class="tag">After</span><span>Sign in, dashboard, an open control record, and the bulk import flow, in the visual language the whole platform now shares.</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 06 IA -->
+<section id="modules">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">06</span><span class="bar"></span> Underneath it</div>
+      <h2 class="title">Twelve modules, one place to find any of them.</h2>
+      <p class="body">Self assessment is the one most people touch every quarter, but the platform covers the full spread of compliance work. All twelve now live behind the same navigation, shared by Control Owners, Testers, and Reviewers alike.</p>
+    </div>
+    <div class="modules reveal">
+      <div class="module"><span>01</span>Master Data</div>
+      <div class="module"><span>02</span>Self Assessment</div>
+      <div class="module"><span>03</span>Control Testing</div>
+      <div class="module"><span>04</span>Issue Tracker</div>
+      <div class="module"><span>05</span>SOP Repository</div>
+      <div class="module"><span>06</span>New Demand Assessment</div>
+      <div class="module"><span>07</span>MICS Monitoring</div>
+      <div class="module"><span>08</span>ITGC Issue Tracker</div>
+      <div class="module"><span>09</span>Evidence and Workpapers</div>
+      <div class="module"><span>10</span>SOX Deficiency Tracker</div>
+      <div class="module"><span>11</span>ITGC and SOC Utility</div>
+      <div class="module"><span>12</span>Automation</div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 OUTCOME -->
+<section id="outcome" class="dark">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">07</span><span class="bar"></span> Outcome</div>
+      <h2 class="title">Faster for everyone, and nothing lost along the way.</h2>
+      <p class="lead">The goal was never speed for its own sake. It was giving five thousand people their time back on a task they have to do whether they like it or not, while keeping every one of the thirty nine controls exactly as strict as compliance requires.</p>
+    </div>
+
+    <div class="fact-row reveal">
+      <div class="fact"><div class="fact-num">50%<span>+</span></div><div class="fact-label">Faster task completion across the core flow</div></div>
+      <div class="fact"><div class="fact-num">5,000<span>+</span></div><div class="fact-label">Users moved across 7 global zones</div></div>
+      <div class="fact"><div class="fact-num">39</div><div class="fact-label">Compliance controls kept fully intact</div></div>
+      <div class="fact"><div class="fact-num">12</div><div class="fact-label">Modules unified into one platform</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 VOICES -->
+<section id="voices">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">08</span><span class="bar"></span> What people said</div>
+      <h2 class="title">Feedback from reviews and testing.</h2>
+      <p class="body">Gathered during UAT and design reviews. Names are left out, roles are not.</p>
+    </div>
+
+    <div class="voices reveal">
+      <div class="voice"><p>"The new platform finally feels like one place. Finding my pending controls used to take minutes. Now it is the first thing I see."</p><div class="who"><b>Control Owner</b>, UAT participant</div></div>
+      <div class="voice"><p>"Inline validation changed everything. We catch issues while typing instead of at submission, so there is a lot less rework."</p><div class="who"><b>Compliance Manager</b>, Governance team</div></div>
+      <div class="voice"><p>"The design kept our business rules intact while making the day to day work much simpler. Adoption went smoother than we expected."</p><div class="who"><b>Product Owner</b>, Technology Compliance</div></div>
+      <div class="voice"><p>"Bulk import with instant feedback saved us hours each cycle. Only the failed rows come back. No more guessing which ones broke."</p><div class="who"><b>Control Tester</b>, Regional zone</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 LEARNINGS -->
+<section id="learnings">
+  <div class="wrap">
+    <div class="col">
+      <div class="kicker"><span class="n">09</span><span class="bar"></span> What I learned</div>
+      <h2 class="title">A migration is a change project that happens to need an interface.</h2>
+
+      <div class="learnings">
+        <div class="learning reveal"><h3>The interface is the smaller half of the job</h3><p>Business rules, how people would adopt it, and keeping the service running through the switch mattered as much as any screen I drew.</p></div>
+        <div class="learning reveal"><h3>Keeping familiar words lowers resistance</h3><p>People adapt to a new layout faster than they adapt to new terms for things they already know. I kept the language people already used, even when a cleaner term existed.</p></div>
+        <div class="learning reveal"><h3>Show the error where it happened</h3><p>Validation at the point of interaction stopped more mistakes than validation that blocks submission ever did.</p></div>
+        <div class="learning reveal"><h3>Decide on scale early</h3><p>Planning for bulk workflows and larger data volumes from the start avoided a late, painful patch once real usage arrived.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing">
+  <div class="wrap">
+    <div class="col" style="margin:0 auto;">
+      <div class="kicker" style="justify-content:center;"><span class="bar"></span> Thanks for reading <span class="bar"></span></div>
+      <h2 class="title" style="margin:0 auto;">Built for compliance. Designed for the people who actually use it.</h2>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="fl">MICS <em>360</em></div>
+  <p>Product design · AB InBev · 6 month migration</p>
+  <p><a href="/">← Back to portfolio</a></p>
+</footer>
+
+<script>
+const bar = document.getElementById('progress');
+addEventListener('scroll', () => {
+  const h = document.documentElement;
+  bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+}, { passive: true });
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+</script>
+</body>
+</html>

@@ -1,7 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Canvas, useThree } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import * as THREE from 'three';
 import { AnimatePresence, motion } from 'motion/react';
 import { OrbitControls } from '@react-three/drei';
 import { useExperience } from '../ExperienceProvider';
@@ -11,6 +12,7 @@ import { ProjectAnchor } from './ProjectAnchor';
 import {
   SpatialCtx,
   createTransforms,
+  useSpatial,
   type ReachState,
   type SpatialValue,
 } from './spatialStore';
@@ -44,6 +46,25 @@ export function SpatialMode() {
   const reachRef = useRef<ReachState | null>(null);
 
   const transforms = useMemo(() => createTransforms(), []);
+
+  /**
+   * Zoom impulses from the HUD's +/− buttons, consumed by CameraRig inside the
+   * canvas. A ref, not state: it crosses the DOM→R3F boundary every click and
+   * is read per frame.
+   */
+  const zoomStepsRef = useRef(0);
+
+  // The homepage behind this fixed overlay stays scrollable, so any wheel that
+  // misses the canvas (over HUD chrome, the legend, the panel) scrolls the page
+  // underneath — invisible now, but on exit the visitor lands somewhere they
+  // never scrolled to. Lock it for the lifetime of the overlay.
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
 
   // Plain ref write: called every frame from the gesture loop, read every frame
   // by the HUD. Neither side needs React to know.
@@ -111,8 +132,9 @@ export function SpatialMode() {
     [announce],
   );
 
-  // Escape is the keyboard equivalent of the closed fist — every gesture in
-  // this mode needs a non-gesture path or a failed camera traps the visitor.
+  // Keyboard mirrors of the gestures — every gesture in this mode needs a
+  // non-gesture path or a failed camera traps the visitor. Escape is the
+  // closed fist, arrows are the swipe, Enter is palm up/down on the selection.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -125,10 +147,13 @@ export function SpatialMode() {
       }
       if (e.key === 'ArrowRight') navigate('right');
       if (e.key === 'ArrowLeft') navigate('left');
+      if (e.key === 'Enter' && selected) {
+        setOpened((o) => (o === selected ? null : selected));
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [handleExit, navigate, opened, contactOpen]);
+  }, [handleExit, navigate, opened, contactOpen, selected]);
 
   const value: SpatialValue = useMemo(
     () => ({
@@ -203,8 +228,9 @@ export function SpatialMode() {
           className="absolute inset-0"
           gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
           camera={{ position: [0, 0, 0.6], fov: 55, near: 0.05, far: 60 }}
+          // No shadows: there is no ground plane to receive them, so shadow
+          // mapping was a per-frame depth pass rendering nothing.
           dpr={[1, 2]}
-          shadows
           onCreated={({ gl }) => {
             const canvas = gl.domElement;
             // Without preventDefault the browser will not even attempt to
@@ -221,7 +247,7 @@ export function SpatialMode() {
               only remote dependency in the whole build, and its reflections are
               nearly invisible on surfaces this matte. */}
           <ambientLight intensity={0.9} />
-          <directionalLight position={[3, 6, 4]} intensity={1.4} castShadow />
+          <directionalLight position={[3, 6, 4]} intensity={1.4} />
           <directionalLight position={[-4, 2, -3]} intensity={0.55} />
           <directionalLight position={[0, -3, 2]} intensity={0.25} />
 
@@ -252,6 +278,7 @@ export function SpatialMode() {
             makeDefault
           />
           <FitCamera />
+          <CameraRig zoomStepsRef={zoomStepsRef} />
         </Canvas>
 
         {cameraStatus === 'granted' && (
@@ -263,7 +290,16 @@ export function SpatialMode() {
           reachRef={reachRef}
           toast={toast}
           onExit={handleExit}
+          onContact={() => setContactOpen((v) => !v)}
+          onNavigate={navigate}
+          onOpenSelected={() => {
+            if (selected) setOpened((o) => (o === selected ? null : selected));
+          }}
+          onZoom={(dir) => {
+            zoomStepsRef.current += dir;
+          }}
           selected={selected}
+          opened={opened}
         />
 
         {glLost && (
@@ -273,13 +309,28 @@ export function SpatialMode() {
               This usually means the GPU was reclaimed by another application. The scene will
               recover on its own if the browser restores it.
             </p>
-            <button
-              type="button"
-              onClick={handleExit}
-              className="mt-2 rounded-full border border-paper/30 px-4 py-2 text-[11px] text-paper"
-            >
-              Back to the homepage
-            </button>
+            <div className="mt-2 flex gap-3">
+              {/* Manual rebuild: the automatic path waits on a visibilitychange
+                  that some embedded contexts never deliver. A button answers to
+                  nothing but the click. */}
+              <button
+                type="button"
+                onClick={() => {
+                  setCanvasKey((k) => k + 1);
+                  setGlLost(false);
+                }}
+                className="rounded-full bg-paper px-4 py-2 text-[11px] font-medium text-ink"
+              >
+                Try again
+              </button>
+              <button
+                type="button"
+                onClick={handleExit}
+                className="rounded-full border border-paper/30 px-4 py-2 text-[11px] text-paper"
+              >
+                Back to the homepage
+              </button>
+            </div>
           </div>
         )}
 
@@ -289,6 +340,67 @@ export function SpatialMode() {
       </motion.div>
     </SpatialCtx.Provider>
   );
+}
+
+/**
+ * Camera behaviours that need to live inside the canvas: focus-on-open and
+ * button-driven zoom.
+ *
+ * Focus: panels are billboarded above their objects, so a project near the
+ * edge of the layout opens its panel half off-screen. Rather than clamping the
+ * panel to the viewport — which would tear it away from the object it belongs
+ * to — the camera swings to centre the object itself. Closing eases back to
+ * the exhibition's centroid. Orbiting while open still works; this only moves
+ * the target the user orbits around.
+ *
+ * Zoom: scroll-wheel zoom exists but is invisible — nothing on screen says it
+ * is possible, and trackpad users often never try. The HUD's +/− buttons feed
+ * impulses through `zoomStepsRef`; each becomes a smooth dolly toward or away
+ * from the target. OrbitControls clamps the resulting radius to its own
+ * min/max on update, so the buttons can never dolly through an object or into
+ * the far void.
+ */
+function CameraRig({ zoomStepsRef }: { zoomStepsRef: React.RefObject<number> }) {
+  const spatial = useSpatial();
+  const camera = useThree((s) => s.camera);
+  const controls = useThree((s) => s.controls) as { target?: THREE.Vector3 } | null;
+  const desired = useRef(new THREE.Vector3());
+  const desiredDist = useRef<number | null>(null);
+  const offset = useRef(new THREE.Vector3());
+
+  useFrame((_, delta) => {
+    if (!controls?.target) return;
+    const k = 1 - Math.pow(0.03, delta);
+
+    const t = spatial.opened ? spatial.transforms.get(spatial.opened) : null;
+    if (t) {
+      desired.current.set(t.position.x, t.position.y + 0.3, t.position.z);
+    } else {
+      desired.current.set(...SCENE_CENTER);
+    }
+    // Drei's OrbitControls updates itself each frame; only the target moves.
+    controls.target.lerp(desired.current, k);
+
+    // Consume pending zoom impulses: each step multiplies the dolly distance.
+    const steps = zoomStepsRef.current;
+    if (steps !== 0) {
+      zoomStepsRef.current = 0;
+      const cur = camera.position.distanceTo(controls.target);
+      desiredDist.current = (desiredDist.current ?? cur) * Math.pow(0.72, steps);
+    }
+
+    if (desiredDist.current !== null) {
+      const cur = camera.position.distanceTo(controls.target);
+      const next = THREE.MathUtils.lerp(cur, desiredDist.current, k);
+      offset.current.copy(camera.position).sub(controls.target).setLength(next);
+      camera.position.copy(controls.target).add(offset.current);
+      // Hand the distance back to the wheel once the ease has landed, so
+      // button zoom and scroll zoom never fight over the radius.
+      if (Math.abs(next - desiredDist.current) < 0.01) desiredDist.current = null;
+    }
+  });
+
+  return null;
 }
 
 /** Centroid of the exhibition, and how much space it needs, in metres. */

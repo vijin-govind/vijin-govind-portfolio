@@ -31,13 +31,23 @@ export function SpatialHUD({
   reachRef,
   toast,
   onExit,
+  onContact,
+  onNavigate,
+  onOpenSelected,
+  onZoom,
   selected,
+  opened,
 }: {
   progressRef: React.RefObject<{ label: string; value: number } | null>;
   reachRef: React.RefObject<ReachState | null>;
   toast: { id: number; label: string } | null;
   onExit: () => void;
+  onContact: () => void;
+  onNavigate: (dir: 'left' | 'right') => void;
+  onOpenSelected: () => void;
+  onZoom: (dir: 1 | -1) => void;
   selected: string | null;
+  opened: string | null;
 }) {
   const { handsVisible, cameraStatus, soundOn, toggleSound } = useExperience();
   const [legendOpen, setLegendOpen] = useState(true);
@@ -63,6 +73,15 @@ export function SpatialHUD({
         </div>
 
         <div className="pointer-events-auto flex items-center gap-3">
+          {/* Mouse-reachable twin of the peace gesture: without it, a visitor
+              with no camera has no route to the contact card at all. */}
+          <button
+            type="button"
+            onClick={onContact}
+            className="rounded-full border border-paper/25 px-3 py-1.5 text-[10px] text-paper/80 backdrop-blur-md transition-colors hover:border-paper hover:text-paper"
+          >
+            Contact
+          </button>
           <button
             type="button"
             onClick={toggleSound}
@@ -116,9 +135,9 @@ export function SpatialHUD({
       {/* Tracking status */}
       <div className="pointer-events-none absolute bottom-6 right-6 z-50 text-right lg:bottom-8 lg:right-8">
         {cameraStatus !== 'granted' ? (
-          <p className="max-w-[220px] text-[10px] leading-relaxed text-paper/55">
-            Without camera access this scene is mouse-driven: drag to orbit, scroll to zoom, arrow
-            keys to change project.
+          <p className="max-w-[240px] text-[10px] leading-relaxed text-paper/55">
+            Mouse-driven without a camera: drag to orbit, scroll to zoom, click to select,
+            double-click (or Enter) for the case study, arrows to change project.
           </p>
         ) : (
           <p className="flex items-center justify-end gap-2 text-[10px] text-paper/55">
@@ -130,6 +149,44 @@ export function SpatialHUD({
             {handsVisible ? 'Hands tracked' : 'Show your hands'}
           </p>
         )}
+      </div>
+
+      {/* Control bar: the explicit, always-visible spine of the experience.
+          Gestures and scroll are the expressive inputs, but none of them are
+          discoverable by looking at the screen — a first-time visitor needs
+          controls that say what is possible. Prev/next, the case-study CTA,
+          and zoom each mirror a gesture; nothing here is button-only. */}
+      <div className="pointer-events-auto absolute inset-x-0 bottom-5 z-50 flex justify-center">
+        <div className="flex items-center gap-1 rounded-full bg-ink/45 p-1.5 backdrop-blur-lg">
+          <BarButton onClick={() => onNavigate('left')} label="Previous project">
+            ‹
+          </BarButton>
+
+          <button
+            type="button"
+            onClick={onOpenSelected}
+            disabled={!selected}
+            className="rounded-full bg-paper px-4 py-1.5 text-[11px] font-medium text-ink transition-transform duration-200 hover:scale-[1.03] active:scale-[0.97] disabled:opacity-40"
+          >
+            {opened ? 'Close case study' : 'Open case study'}
+            <span className="ml-2 font-normal text-ink/45">
+              {selectedProject ? `${projects.indexOf(selectedProject) + 1} / ${projects.length}` : ''}
+            </span>
+          </button>
+
+          <BarButton onClick={() => onNavigate('right')} label="Next project">
+            ›
+          </BarButton>
+
+          <span aria-hidden className="mx-1 h-4 w-px bg-paper/20" />
+
+          <BarButton onClick={() => onZoom(1)} label="Zoom in">
+            +
+          </BarButton>
+          <BarButton onClick={() => onZoom(-1)} label="Zoom out">
+            −
+          </BarButton>
+        </div>
       </div>
 
       {/* Gesture toast */}
@@ -150,6 +207,29 @@ export function SpatialHUD({
         </AnimatePresence>
       </div>
     </>
+  );
+}
+
+/** Round icon button for the control bar. */
+function BarButton({
+  onClick,
+  label,
+  children,
+}: {
+  onClick: () => void;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      title={label}
+      className="flex h-8 w-8 items-center justify-center rounded-full text-base leading-none text-paper/75 transition-colors duration-200 hover:bg-paper/15 hover:text-paper"
+    >
+      {children}
+    </button>
   );
 }
 
