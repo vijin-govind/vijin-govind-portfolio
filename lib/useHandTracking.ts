@@ -48,6 +48,8 @@ export function useHandTracking(
   // frames so the temporal filters actually have history to work with.
   const stabilizers = useRef([new GestureStabilizer(), new GestureStabilizer()]);
   const smoothers = useRef([new PointSmoother(), new PointSmoother()]);
+  /** Fingertip smoothing, separate from the pinch point's: they move apart. */
+  const aimSmoothers = useRef([new PointSmoother(), new PointSmoother()]);
   const depths = useRef([new DepthTracker(), new DepthTracker()]);
 
   useEffect(() => {
@@ -159,6 +161,9 @@ export function useHandTracking(
           y: rawPinchY,
         };
 
+        const tip = raw[LANDMARK.INDEX_TIP];
+        const aim = aimSmoothers.current[i]?.filter(tip.x, tip.y, dt) ?? { x: tip.x, y: tip.y };
+
         const gesture = stabilizers.current[i]?.push(classify(raw, handedness)) ?? 'none';
 
         hands.push({
@@ -167,6 +172,7 @@ export function useHandTracking(
           gesture,
           pinchStrength: strength,
           pinchPoint: smoothed,
+          aimPoint: aim,
           palmCenter: {
             x: (raw[LANDMARK.WRIST].x + raw[LANDMARK.MIDDLE_MCP].x) / 2,
             y: (raw[LANDMARK.WRIST].y + raw[LANDMARK.MIDDLE_MCP].y) / 2,
@@ -183,6 +189,7 @@ export function useHandTracking(
       for (let i = result.landmarks.length; i < 2; i++) {
         stabilizers.current[i]?.reset();
         smoothers.current[i]?.reset();
+        aimSmoothers.current[i]?.reset();
         depths.current[i]?.reset();
       }
 

@@ -2,6 +2,7 @@
 
 import { motion } from 'motion/react';
 import { selectedWorks, type Work } from '@/content/portfolio';
+import { ZeroGText } from './ZeroG';
 
 /**
  * The selected-works grid, sitting under the experience list.
@@ -17,7 +18,7 @@ export function SelectedWorks() {
     <section className="mt-24" aria-labelledby="works-heading">
       <div className="flex items-baseline justify-between">
         <h2 id="works-heading" className="text-sm text-ink-faint">
-          Selected works
+          <ZeroGText text="Selected works" />
         </h2>
         <span className="text-sm text-ink-faint tabular-nums">
           {String(selectedWorks.length).padStart(2, '0')}
@@ -39,7 +40,7 @@ function WorkCard({ work, index }: { work: Work; index: number }) {
   // together. Linkable only when a real destination exists.
   const inner = (
     <>
-      <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-scrim/40 transition-colors duration-500 group-hover:bg-scrim/70">
+      <div data-zerog className="relative aspect-[4/3] overflow-hidden rounded-xl bg-scrim/40 transition-colors duration-500 group-hover:bg-scrim/70">
         {work.image ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -59,10 +60,14 @@ function WorkCard({ work, index }: { work: Work; index: number }) {
         )}
 
         {/* Index sits above the image, so it needs its own contrast when one is
-            present rather than relying on the pale placeholder background. */}
+            present. A drop shadow alone vanished on bright covers (the white
+            mural wall) and collided with type baked into others (the film
+            poster), so image cards get a small dark pill instead. */}
         <span
-          className={`absolute left-4 top-3.5 text-xs tabular-nums ${
-            work.image ? 'text-paper/80 drop-shadow-sm' : 'text-ink-faint'
+          className={`absolute tabular-nums ${
+            work.image
+              ? 'left-3 top-3 rounded-full bg-ink/55 px-2 py-0.5 text-[11px] text-paper backdrop-blur-sm'
+              : 'left-4 top-3.5 text-xs text-ink-faint'
           }`}
         >
           {label}
@@ -80,10 +85,14 @@ function WorkCard({ work, index }: { work: Work; index: number }) {
       </div>
 
       <div className="mt-4 flex items-baseline justify-between gap-4">
-        <h3 className="text-base font-medium text-ink md:text-lg">{work.title}</h3>
+        <h3 className="text-base font-medium text-ink md:text-lg">
+          <ZeroGText text={work.title} />
+        </h3>
         {work.year && <span className="shrink-0 text-sm text-ink-faint">{work.year}</span>}
       </div>
-      <p className="mt-1 text-sm leading-relaxed text-ink-soft">{work.tag}</p>
+      <p className="mt-1 text-sm leading-relaxed text-ink-soft">
+        <ZeroGText text={work.tag} />
+      </p>
     </>
   );
 

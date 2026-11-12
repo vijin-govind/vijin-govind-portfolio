@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useExperience } from './ExperienceProvider';
-import { coverPoint, coverTransform, videoSize } from '@/lib/videoMapping';
+import { coverPoint, coverTransform, expandPoint, videoSize } from '@/lib/videoMapping';
 
 /** MediaPipe's hand topology: bone pairs by landmark index. */
 const BONES: [number, number][] = [
@@ -23,12 +23,20 @@ export function HandSkeleton({
   className,
   mirrored = false,
   light = false,
+  mapping = 'cover',
 }: {
   className?: string;
   /** Match the mirrored preview so the skeleton lands on the visitor's hand. */
   mirrored?: boolean;
   /** Draw in paper-white, for use over a dark camera feed. */
   light?: boolean;
+  /**
+   * `cover` registers the skeleton on the hand in a visible video. `expand`
+   * matches the homepage cord's cursor instead — the XR backdrop there is
+   * blurred past the point of alignment mattering, and a skeleton that
+   * disagreed with the cursor grabbing the cord would be the worse lie.
+   */
+  mapping?: 'cover' | 'expand';
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { framesRef, videoRef } = useExperience();
@@ -72,7 +80,10 @@ export function HandSkeleton({
       const vsize = videoSize(videoRef.current);
       if (!vsize) return;
       const t = coverTransform(vsize, { width: w, height: h });
-      const map = (lx: number, ly: number) => coverPoint(lx, ly, t, mirrored);
+      const map =
+        mapping === 'expand'
+          ? (lx: number, ly: number) => expandPoint(lx, ly, { width: w, height: h }, mirrored)
+          : (lx: number, ly: number) => coverPoint(lx, ly, t, mirrored);
 
       for (const hand of hands) {
         const lm = hand.landmarks;
@@ -121,7 +132,7 @@ export function HandSkeleton({
       cancelAnimationFrame(raf);
       ro.disconnect();
     };
-  }, [framesRef, videoRef, mirrored, light]);
+  }, [framesRef, videoRef, mirrored, light, mapping]);
 
   return <canvas ref={canvasRef} className={className} aria-hidden />;
 }

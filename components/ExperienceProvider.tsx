@@ -25,6 +25,12 @@ interface ExperienceValue {
   cameraStatus: CameraStatus;
   cameraError: string | null;
   requestCamera: () => Promise<void>;
+  /**
+   * Release the camera entirely — the 2D side of the dock's XR/2D switch.
+   * Stopping the tracks (not just hiding the video) is what turns the camera
+   * light off, which is the promise the switch makes.
+   */
+  stopCamera: () => void;
   stream: MediaStream | null;
 
   /** The single shared <video>. Both the dock and the spatial view draw from it. */
@@ -69,9 +75,14 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
     trackingEnabled,
   );
 
-  // Attach the stream to the shared element whenever either side changes.
+  // Attach the stream to the shared element whenever either side changes, and
+  // detach it on stop so the element does not hold a dead stream's last frame.
   useEffect(() => {
-    if (!videoEl || !camera.stream) return;
+    if (!videoEl) return;
+    if (!camera.stream) {
+      videoEl.srcObject = null;
+      return;
+    }
     videoEl.srcObject = camera.stream;
     void videoEl.play().catch(() => {
       /* autoplay rejection is non-fatal; the element is muted+playsInline */
@@ -124,6 +135,7 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
       cameraStatus: camera.status,
       cameraError: camera.error,
       requestCamera: camera.request,
+      stopCamera: camera.stop,
       stream: camera.stream,
       videoRef,
       registerVideo,
@@ -141,6 +153,7 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
       camera.status,
       camera.error,
       camera.request,
+      camera.stop,
       camera.stream,
       registerVideo,
       framesRef,
