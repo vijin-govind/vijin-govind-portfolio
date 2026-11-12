@@ -56,6 +56,13 @@ export interface HandReading {
   pinchStrength: number;
   /** Midpoint of thumb and index tips — the natural "grab point" of a pinch. */
   pinchPoint: { x: number; y: number };
+  /**
+   * Smoothed index fingertip — what a *pointing* hand aims with. The pinch
+   * point sits between thumb and index tips, which while pointing (thumb
+   * tucked) is several centimetres from the fingertip the visitor sees drawn,
+   * so aiming with it put the target beside the finger instead of under it.
+   */
+  aimPoint: { x: number; y: number };
   /** Palm centre in normalized image space. */
   palmCenter: { x: number; y: number };
   /** Rough distance proxy: larger hand scale means closer to the lens. */

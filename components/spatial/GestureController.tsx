@@ -25,6 +25,23 @@ const HOLD_MS: Partial<Record<GestureName, number>> = {
   palmDown: 300,
 };
 
+/**
+ * Point and hold this long to open a project.
+ *
+ * Pointing used to only highlight; opening needed a double air-tap or an
+ * upturned palm, neither of which anyone discovers by looking at the screen.
+ * Dwell is the one selection model people get without being told — the
+ * filling ring explains itself — so pointing now does what visitors expect.
+ */
+const DWELL_MS = 1100;
+
+/**
+ * Magnetic targeting radius, in aspect-corrected NDC. A ray that just misses
+ * a model's silhouette (between the temple's pillars, past the easel's legs)
+ * still lands on the nearest project within this distance of its centre.
+ */
+const MAGNET_NDC = 0.24;
+
 /** An air tap is a pinch shorter than this that barely moved. */
 const TAP_MAX_MS = 320;
 const TAP_MAX_TRAVEL = 0.05; // normalized camera units
@@ -79,7 +96,18 @@ export function GestureController({
   const spatial = useSpatial();
   const { camera, scene, size } = useThree();
 
-  const raycaster = useRef(new THREE.Raycaster());
+  const raycaster = useRef(
+    (() => {
+      const r = new THREE.Raycaster();
+      // three.js hit-tests lines with a 1-unit (here: 1 metre) tolerance by
+      // default. The MICS sparkline is a Line, so every ray within a metre of
+      // it — including one aimed squarely at the temple beside it — hit MICS
+      // first. Lines here are decoration; give them no tolerance at all.
+      r.params.Line = { threshold: 0 };
+      r.params.Points = { threshold: 0 };
+      return r;
+    })(),
+  );
   const memory = useRef<HandMemory[]>([
     { last: 'none', since: 0, fired: false, pinchStart: null },
     { last: 'none', since: 0, fired: false, pinchStart: null },
@@ -105,6 +133,14 @@ export function GestureController({
 
   /** Last committed tap, for pairing into a double tap. */
   const lastTap = useRef<{ t: number; id: string | null; x: number; y: number } | null>(null);
+
+  /** Current point-and-hold: which project, since when, and whether it fired. */
+  const dwell = useRef<{ id: string | null; start: number; done: boolean }>({
+    id: null,
+    start: 0,
+    done: false,
+  });
+  const projected = useRef(new THREE.Vector3());
 
   const plane = useRef(new THREE.Plane());
   const hitPoint = useRef(new THREE.Vector3());
@@ -141,6 +177,35 @@ export function GestureController({
     return null;
   };
 
+  /**
+   * Nearest project to a screen point, by its projected centre. The fallback
+   * when the exact raycast misses: the procedural models are full of gaps, and
+   * a fingertip that wobbles a few pixels off a pillar should not lose the
+   * target the visitor is obviously pointing at.
+   */
+  const pickNearest = (nx: number, ny: number): string | null => {
+    const aspect = size.width / Math.max(size.height, 1);
+    let best: string | null = null;
+    let bestD = MAGNET_NDC;
+    for (const [id, t] of spatial.transforms) {
+      // Aim at the body of the object, not its base.
+      projected.current.copy(t.position).setY(t.position.y + 0.25 * t.scale).project(camera);
+      if (projected.current.z > 1) continue; // behind the camera
+      const d = Math.hypot((projected.current.x - nx) * aspect, projected.current.y - ny);
+      if (d < bestD) {
+        bestD = d;
+        best = id;
+      }
+    }
+    return best;
+  };
+
+  const clearDwell = () => {
+    dwell.current.id = null;
+    dwell.current.done = false;
+    spatial.dwellRef.current = null;
+  };
+
   useFrame((_, delta) => {
     const now = performance.now();
     const hands = framesRef.current.hands;
@@ -154,6 +219,7 @@ export function GestureController({
       twoHand.current = null;
       twoFinger.current = null;
       spatial.setReach(null);
+      clearDwell();
       for (const m of memory.current) {
         m.last = 'none';
         m.fired = false;
@@ -297,6 +363,7 @@ export function GestureController({
     }
 
     // ---- Per-hand handling ----------------------------------------------
+    let pointedThisFrame = false;
     for (let i = 0; i < hands.length && i < 2; i++) {
       const hand = hands[i];
       const mem = memory.current[i];
@@ -314,23 +381,50 @@ export function GestureController({
       //    the reach band, so a hand crossing the back of the frame never lights
       //    objects up. Out of band, say why instead of silently doing nothing.
       if (g === 'point') {
+        pointedThisFrame = true;
         if (!inReach) {
+          clearDwell();
           progressRef.current = {
             label:
               hand.depth.zone === 'tooFar'
-                ? `Reach closer · ${(hand.depth.distance * 100).toFixed(0)}cm`
-                : `Too close · ${(hand.depth.distance * 100).toFixed(0)}cm`,
+                ? `Move your hand closer · ${(hand.depth.distance * 100).toFixed(0)}cm`
+                : `Move your hand back · ${(hand.depth.distance * 100).toFixed(0)}cm`,
             value: hand.depth.reach,
           };
         } else {
-          const id = pickAt(ndc.x, ndc.y);
+          // Aim with the fingertip the skeleton draws, not the pinch point.
+          const aim = handToNdc(hand.aimPoint.x, hand.aimPoint.y);
+          const id = pickAt(aim.x, aim.y) ?? pickNearest(aim.x, aim.y);
           if (id !== spatial.hovered) {
             spatial.setHovered(id);
             if (id && soundOn) playTone(880, 0.09, 0.05);
           }
-          progressRef.current = id
-            ? { label: `Pointing · ${(hand.depth.distance * 100).toFixed(0)}cm`, value: 1 }
-            : null;
+
+          // Point and hold: a new target restarts the clock; reaching the end
+          // opens it once, and nothing re-fires until the finger moves on.
+          const dw = dwell.current;
+          if (id !== dw.id) {
+            dw.id = id;
+            dw.start = now;
+            dw.done = id !== null && id === spatial.opened;
+          }
+          if (id) {
+            const value = dw.done ? 1 : Math.min(1, (now - dw.start) / DWELL_MS);
+            spatial.dwellRef.current = { id, value };
+            if (!dw.done && value >= 1) {
+              dw.done = true;
+              const p = projects.find((x) => x.id === id);
+              spatial.setSelected(id);
+              spatial.setOpened(id);
+              spatial.announce(`Opened · ${p?.title ?? id}`);
+              if (soundOn) playTone(760, 0.2, 0.09);
+            }
+          } else {
+            spatial.dwellRef.current = null;
+          }
+          // The cursor ring carries the feedback now; the top ring stays free
+          // for held poses.
+          progressRef.current = null;
         }
       }
 
@@ -473,6 +567,8 @@ export function GestureController({
         progressRef.current = null;
       }
     }
+
+    if (!pointedThisFrame && dwell.current.id !== null) clearDwell();
 
     // Ease every object toward its target. Doing this here rather than in each
     // object keeps one authority over the transform and one spring constant.

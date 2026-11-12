@@ -40,7 +40,10 @@ const HAND_SPAN_FALLBACK = 0.093;
 
 /** The band within which a hand is treated as interacting, in metres. */
 export const REACH_NEAR = 0.28;
-export const REACH_FAR = 0.95;
+// The far edge was 0.95m, which a seated visitor at a desk easily exceeds with
+// a relaxed arm — pointing then silently did nothing. Targeting now opens on a
+// dwell with a magnetic snap, which tolerates the extra noise of a farther hand.
+export const REACH_FAR = 1.3;
 
 export type ReachZone = 'tooClose' | 'reach' | 'tooFar';
 

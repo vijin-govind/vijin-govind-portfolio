@@ -8,7 +8,7 @@ import { projects } from '@/content/portfolio';
  * Per-object transform state.
  *
  * Held in plain mutable objects rather than React state: a drag writes to these
- * every frame, and routing that through setState would re-render four project
+ * every frame, and routing that through setState would re-render five project
  * subtrees at 60fps. Components read them inside useFrame instead.
  */
 export interface ObjectTransform {
@@ -75,6 +75,23 @@ export interface SpatialValue {
    */
   reachRef: RefObject<ReachState | null>;
   setReach: (r: ReachState | null) => void;
+  /**
+   * Point-and-hold progress toward opening a project: written by the gesture
+   * loop every frame, read by the object's ring and the HUD cursor. A ref for
+   * the same reason as reach — it is a per-frame readout, not app state.
+   */
+  dwellRef: RefObject<DwellState | null>;
+  /**
+   * Narrow portrait screens show the case study as a bottom sheet instead of
+   * a card floating in 3D, which at phone size was larger than the screen.
+   */
+  sheetMode: boolean;
+}
+
+export interface DwellState {
+  id: string;
+  /** 0–1. Reaching 1 opens the project. */
+  value: number;
 }
 
 export const SpatialCtx = createContext<SpatialValue | null>(null);

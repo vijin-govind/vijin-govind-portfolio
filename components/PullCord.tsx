@@ -122,8 +122,9 @@ export function PullCord() {
       // Prefer a pinching hand; otherwise track the first hand seen.
       const hand = hands.find((h) => h.gesture === 'pinch') ?? hands[0];
 
-      // There is no full-screen video to align against here — the camera only
-      // appears in the corner dock — so the cursor uses the expanded mapping.
+      // The homepage has no sharp video to align against — in 2D the camera is
+      // off, and in XR the backdrop is blurred past recognition — so the cursor
+      // uses the expanded mapping. XRBackdrop's skeleton uses it too.
       // A raw 0–1 stretch would put the cord, at ~8% of the viewport, out at the
       // very edge of the camera frame where tracking is least reliable.
       const p = expandPoint(
@@ -179,10 +180,18 @@ export function PullCord() {
 
       if (progressRef.current) {
         const c = 2 * Math.PI * 26;
-        progressRef.current.setAttribute('cx', end.x.toFixed(2));
-        progressRef.current.setAttribute('cy', end.y.toFixed(2));
+        const ex = end.x.toFixed(2);
+        const ey = end.y.toFixed(2);
+        progressRef.current.setAttribute('cx', ex);
+        progressRef.current.setAttribute('cy', ey);
+        // Start the arc at twelve o'clock by rotating about the handle itself.
+        // A static rotate(-90) pivoted on the SVG origin instead, flinging the
+        // ring across the screen — where its resting sliver showed as a stray
+        // dash over the page content.
+        progressRef.current.setAttribute('transform', `rotate(-90 ${ex} ${ey})`);
         progressRef.current.style.strokeDasharray = `${(tension * c).toFixed(2)} ${c}`;
-        progressRef.current.style.opacity = tension > 0.02 ? '1' : '0';
+        // The rope at rest keeps a hair of stretch; only a real pull shows.
+        progressRef.current.style.opacity = tension > 0.06 ? '1' : '0';
       }
 
       // Cord thins slightly under tension — a small cue, but it is the kind of
@@ -335,8 +344,8 @@ export function PullCord() {
           strokeWidth={1.5}
           strokeLinecap="round"
           opacity={0}
-          transform="rotate(-90)"
-          style={{ transition: 'opacity 200ms', transformOrigin: 'center' }}
+          // transform is written per frame, pivoting on the handle.
+          style={{ transition: 'opacity 200ms' }}
         />
 
         <path
@@ -416,11 +425,26 @@ function CordHint({
         : 'Pull the cord to view my work';
 
   return (
-    <div
-      className="pointer-events-none fixed left-6 top-[52%] z-30 hidden -translate-y-1/2 md:block lg:left-10"
-      style={{ opacity: state === 'idle' ? 0.55 : 1, transition: 'opacity 400ms' }}
-    >
-      <p className="max-w-[9rem] text-xs leading-relaxed text-ink-faint">{copy}</p>
-    </div>
+    <>
+      <div
+        className="pointer-events-none fixed left-6 top-[52%] z-30 hidden -translate-y-1/2 md:block lg:left-10"
+        style={{ opacity: state === 'idle' ? 0.55 : 1, transition: 'opacity 400ms' }}
+      >
+        <p className="max-w-[9rem] text-xs leading-relaxed text-ink-faint">{copy}</p>
+      </div>
+
+      {/* Phone: there is no empty column for a sentence, only the narrow
+          channel the cord hangs in — so the hint runs down beside the cord,
+          set vertically, ending in an arrow that points the way to pull. */}
+      <div
+        className="pointer-events-none fixed left-[50px] top-24 z-30 md:hidden"
+        style={{ opacity: state === 'idle' ? 0.7 : 1, transition: 'opacity 400ms' }}
+      >
+        <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-ink-faint [writing-mode:vertical-rl]">
+          {state === 'grabbed' ? 'Keep pulling' : 'Pull to explore'}
+          <span aria-hidden className="mt-2 inline-block animate-bounce">↓</span>
+        </p>
+      </div>
+    </>
   );
 }
