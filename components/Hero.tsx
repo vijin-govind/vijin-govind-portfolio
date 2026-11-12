@@ -164,33 +164,28 @@ export function Hero() {
           <p className="mt-4 text-2xl font-semibold leading-tight tracking-tight text-ink sm:text-3xl">
             <ZeroGText text="Have a product that needs a designer?" />
           </p>
-          <a
-            data-zerog
-            href={`mailto:${profile.email}`}
-            className="mt-6 inline-flex w-fit items-center gap-2.5 rounded-full bg-ink px-6 py-3.5 text-sm font-medium text-paper transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98]"
-          >
-            {profile.email}
-            <span aria-hidden>↗</span>
-          </a>
-          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-ink-soft">
-            {profile.socials.map((s) => (
-              <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noreferrer noopener"
-                // 44px-tall hit area on touch without changing the type.
-                className="-my-3 inline-flex items-center py-3 underline decoration-hairline underline-offset-[6px] transition-colors hover:text-ink hover:decoration-ink"
-              >
-                {s.label}
-              </a>
-            ))}
+          {/* Primary: LinkedIn — the channel reviewers actually use, with no
+              address on the page. Secondary: the resume, for whoever is ready
+              to shortlist. */}
+          <div className="mt-6 flex flex-wrap items-center gap-3">
             <a
+              data-zerog
+              href={profile.linkedin}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="inline-flex items-center gap-2.5 rounded-full bg-ink px-6 py-3.5 text-sm font-medium text-paper transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              Connect on LinkedIn
+              <span aria-hidden>↗</span>
+            </a>
+            <a
+              data-zerog
               href="/resume.pdf"
               download="Vijin-Govind-Resume.pdf"
-              className="-my-3 inline-flex items-center py-3 underline decoration-hairline underline-offset-[6px] transition-colors hover:text-ink hover:decoration-ink"
+              className="inline-flex items-center gap-2.5 rounded-full border border-ink px-6 py-3.5 text-sm font-medium text-ink transition-colors duration-300 hover:bg-ink hover:text-paper"
             >
-              Resume
+              Download resume
+              <span aria-hidden className="text-xs">↓</span>
             </a>
           </div>
           <p className="mt-10 text-xs text-ink-faint">

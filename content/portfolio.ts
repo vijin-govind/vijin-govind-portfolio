@@ -54,10 +54,15 @@ export const profile = {
     closing: "But they're always designed with intention.",
   },
   location: 'Bangalore, India',
-  email: 'info@vass.co.in',
+  /**
+   * The primary call to action everywhere: LinkedIn. It is where recruiters
+   * and hiring managers check a designer first, and it keeps any email address
+   * off a public page. Deliberately no email field — nothing can render one.
+   */
+  linkedin: 'https://www.linkedin.com/in/vijingovind',
   socials: [
     { label: 'Instagram', href: 'https://instagram.com/' },
-    { label: 'Linkedin', href: 'https://linkedin.com/in/' },
+    { label: 'Linkedin', href: 'https://www.linkedin.com/in/vijingovind' },
   ],
 };
 

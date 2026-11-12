@@ -652,25 +652,26 @@ function ContactCard({ onClose }: { onClose: () => void }) {
         {profile.location}
       </p>
 
-      <a
-        href={`mailto:${profile.email}`}
-        className="mt-6 block text-lg text-ink underline decoration-hairline underline-offset-8 transition-colors hover:decoration-ink"
-      >
-        {profile.email}
-      </a>
-
-      <div className="mt-6 flex gap-5">
-        {profile.socials.map((s) => (
-          <a
-            key={s.label}
-            href={s.href}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="text-sm text-ink-soft transition-colors hover:text-ink"
-          >
-            {s.label}
-          </a>
-        ))}
+      {/* Same calls to action as the homepage: LinkedIn first, then the
+          resume. New tabs, so the 3D scene keeps running behind. */}
+      <div className="mt-6 flex flex-col gap-3">
+        <a
+          href={profile.linkedin}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="flex items-center justify-between rounded-full bg-ink px-5 py-3 text-sm font-medium text-paper transition-opacity hover:opacity-85"
+        >
+          Connect on LinkedIn
+          <span aria-hidden>↗</span>
+        </a>
+        <a
+          href="/resume.pdf"
+          download="Vijin-Govind-Resume.pdf"
+          className="flex items-center justify-between rounded-full border border-ink px-5 py-3 text-sm font-medium text-ink transition-colors hover:bg-ink hover:text-paper"
+        >
+          Download resume
+          <span aria-hidden className="text-xs">↓</span>
+        </a>
       </div>
 
       <button
