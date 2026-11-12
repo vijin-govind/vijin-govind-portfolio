@@ -165,8 +165,8 @@ export function Hero() {
             <ZeroGText text="Have a product that needs a designer?" />
           </p>
           {/* Primary: LinkedIn — the channel reviewers actually use, with no
-              address on the page. Secondary: the resume, for whoever is ready
-              to shortlist. */}
+              address on the page. Secondary: a direct call. The resume already
+              has its own button at the top of the page. */}
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <a
               data-zerog
@@ -180,19 +180,42 @@ export function Hero() {
             </a>
             <a
               data-zerog
-              href="/resume.pdf"
-              download="Vijin-Govind-Resume.pdf"
+              href={profile.phone.href}
+              aria-label={`Connect on call, ${profile.phone.display}`}
               className="inline-flex items-center gap-2.5 rounded-full border border-ink px-6 py-3.5 text-sm font-medium text-ink transition-colors duration-300 hover:bg-ink hover:text-paper"
             >
-              Download resume
-              <span aria-hidden className="text-xs">↓</span>
+              Connect on call
+              <PhoneGlyph />
             </a>
           </div>
+          {/* The number in plain sight too: a laptop often cannot place a
+              tel: call, and a visitor there needs something to dial. */}
           <p className="mt-10 text-xs text-ink-faint">
-            {profile.name} · {profile.location}
+            {profile.name} · {profile.location} ·{' '}
+            <a href={profile.phone.href} className="whitespace-nowrap hover:text-ink">
+              {profile.phone.display}
+            </a>
           </p>
         </section>
       </div>
     </div>
+  );
+}
+
+/** Handset glyph for the call button, drawn to sit with the ↗ and ↓ arrows. */
+function PhoneGlyph() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-3.5 w-3.5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" />
+    </svg>
   );
 }

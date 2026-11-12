@@ -652,8 +652,7 @@ function ContactCard({ onClose }: { onClose: () => void }) {
         {profile.location}
       </p>
 
-      {/* Same calls to action as the homepage: LinkedIn first, then the
-          resume. New tabs, so the 3D scene keeps running behind. */}
+      {/* Same calls to action as the homepage: LinkedIn first, then a call. */}
       <div className="mt-6 flex flex-col gap-3">
         <a
           href={profile.linkedin}
@@ -665,12 +664,11 @@ function ContactCard({ onClose }: { onClose: () => void }) {
           <span aria-hidden>↗</span>
         </a>
         <a
-          href="/resume.pdf"
-          download="Vijin-Govind-Resume.pdf"
+          href={profile.phone.href}
           className="flex items-center justify-between rounded-full border border-ink px-5 py-3 text-sm font-medium text-ink transition-colors hover:bg-ink hover:text-paper"
         >
-          Download resume
-          <span aria-hidden className="text-xs">↓</span>
+          Connect on call
+          <span className="text-xs font-normal opacity-70">{profile.phone.display}</span>
         </a>
       </div>
 

@@ -60,6 +60,8 @@ export const profile = {
    * off a public page. Deliberately no email field — nothing can render one.
    */
   linkedin: 'https://www.linkedin.com/in/vijingovind',
+  /** Second call to action: a direct call. `tel:` opens the dialer on phones. */
+  phone: { display: '+91 88483 67045', href: 'tel:+918848367045' },
   socials: [
     { label: 'Instagram', href: 'https://instagram.com/' },
     { label: 'Linkedin', href: 'https://www.linkedin.com/in/vijingovind' },
