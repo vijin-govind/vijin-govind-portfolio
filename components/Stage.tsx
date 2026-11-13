@@ -8,6 +8,7 @@ import { PullCord } from './PullCord';
 import { CameraDock } from './CameraDock';
 import { WelcomeModal } from './WelcomeModal';
 import { XRBackdrop } from './XRBackdrop';
+import { GravityGrid } from './GravityGrid';
 import { ZeroGField, useZeroGActive } from './ZeroG';
 
 // Three.js, drei and the whole spatial layer are ~600kB that a visitor who
@@ -29,6 +30,10 @@ export function Stage() {
       <AnimatePresence>
         {mode === 'site' && cameraStatus === 'granted' && <XRBackdrop key="xr-backdrop" />}
       </AnimatePresence>
+      {/* 2D background: a spacetime grid the cursor bends like a mass. In XR
+          the camera room is the background instead; in the spatial view it
+          would only be drawing behind an opaque overlay. */}
+      {mode === 'site' && cameraStatus !== 'granted' && <GravityGrid />}
       {/* XR homepage physics: fingertips push the page's letters and words. */}
       {zeroG && <ZeroGField />}
 
