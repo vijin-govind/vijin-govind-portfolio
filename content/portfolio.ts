@@ -16,6 +16,8 @@ export interface Project {
   discipline: string;
   /** Homepage card line: client and/or discipline. */
   tag: string;
+  /** Discipline chips shown on the homepage card, e.g. "UI/UX". */
+  skills?: string[];
   year?: string;
   /** Anchors the project in the spatial scene: [x, y, z] in metres. */
   position: [number, number, number];
@@ -86,6 +88,7 @@ export const experience = [
 export const projects: Project[] = [
   {
     id: 'mics360',
+    skills: ['UI/UX'],
     title: 'MICS 360',
     discipline: 'Digital · Enterprise platform',
     tag: 'AB InBev · Enterprise application',
@@ -110,6 +113,7 @@ export const projects: Project[] = [
   },
   {
     id: 'temple-address',
+    skills: ['UI/UX'],
     title: 'TempleAddress',
     discipline: 'Digital · Cultural product',
     tag: 'Product design · Cultural',
@@ -134,6 +138,7 @@ export const projects: Project[] = [
   },
   {
     id: 'amg',
+    skills: ['UI/UX'],
     title: 'AMG',
     discipline: 'Digital · Event platform',
     tag: 'Self exploration · Event platform',
@@ -207,12 +212,13 @@ export const projects: Project[] = [
 ];
 
 /** What a homepage card needs. Derived, never written by hand. */
-export type Work = Pick<Project, 'id' | 'title' | 'tag' | 'year' | 'image' | 'href'>;
+export type Work = Pick<Project, 'id' | 'title' | 'tag' | 'skills' | 'year' | 'image' | 'href'>;
 
-export const selectedWorks: Work[] = projects.map(({ id, title, tag, year, image, href }) => ({
+export const selectedWorks: Work[] = projects.map(({ id, title, tag, skills, year, image, href }) => ({
   id,
   title,
   tag,
+  skills,
   year,
   image,
   href,

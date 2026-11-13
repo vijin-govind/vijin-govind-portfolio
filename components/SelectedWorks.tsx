@@ -93,6 +93,19 @@ function WorkCard({ work, index }: { work: Work; index: number }) {
       <p className="mt-1 text-sm leading-relaxed text-ink-soft">
         <ZeroGText text={work.tag} />
       </p>
+      {work.skills && work.skills.length > 0 && (
+        <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="Disciplines">
+          {work.skills.map((skill) => (
+            <li
+              key={skill}
+              data-zerog
+              className="rounded-full border border-hairline bg-paper px-2.5 py-1 text-[11px] font-medium leading-none tracking-wide text-ink-soft transition-colors duration-300 group-hover:border-ink/30 group-hover:text-ink"
+            >
+              {skill}
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 
