@@ -162,7 +162,9 @@ export function Hero() {
             <ZeroGText text="Get in touch" />
           </h2>
           <p className="mt-4 text-2xl font-semibold leading-tight tracking-tight text-ink sm:text-3xl">
-            <ZeroGText text="Have a product that needs a designer?" />
+            {/* Bookends the hero's "always designed with intention": the
+                page closes in the same first-person voice it opens with. */}
+            <ZeroGText text="Let's design something with intention." />
           </p>
           {/* Primary: LinkedIn — the channel reviewers actually use, with no
               address on the page. Secondary: a direct call. The resume already
